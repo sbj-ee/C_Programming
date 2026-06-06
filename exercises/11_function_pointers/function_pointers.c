@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 
-#define PI 3.14159265358979323846
+#define M_PI 3.14159265358979323846
 
 /* A function pointer type declaration reads right-to-left:
      'operation' is a pointer to a function that takes two ints and returns an int */
@@ -26,7 +26,7 @@ void print_value(int x)    { printf("  %d\n", x); }
 void print_doubled(int x)  { printf("  %d\n", x * 2); }
 void print_square(int x)   { printf("  %d\n", x * x); }
 
-double apply_to_pi(double (*fn)(double)) { return fn(PI); }
+double apply_to_pi(double (*fn)(double)) { return fn(M_PI); }
 
 /* ------------------------------------------------------------------ */
 
