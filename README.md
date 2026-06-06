@@ -62,6 +62,7 @@ make clean
 | 12 | Enums & Unions | `enum`, bit-flag enums, `union`, tagged unions, variant types |
 | 13 | Bit Manipulation | operators, set/clear/toggle/test, popcount, bitfields, packing |
 | 14 | Preprocessor | object/function-like macros, `#`, `##`, variadic, `#ifdef`, include guards |
+| 15 | Binary Search Tree | insert, search, delete (3 cases), traversals, height, visualisation |
 
 ---
 
