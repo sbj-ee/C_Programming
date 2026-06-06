@@ -60,6 +60,7 @@ make clean
 | 10 | Linked Lists | singly linked list with insert, delete, traverse |
 | 11 | Function Pointers | syntax, callbacks, dispatch tables, returning pointers, `qsort` |
 | 12 | Enums & Unions | `enum`, bit-flag enums, `union`, tagged unions, variant types |
+| 13 | Bit Manipulation | operators, set/clear/toggle/test, popcount, bitfields, packing |
 
 ---
 
