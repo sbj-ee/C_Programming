@@ -68,6 +68,7 @@ make clean
 | 18 | Hash Table | djb2 hash, separate chaining, put/get/delete, rehash, word frequency |
 | 19 | Multi-file Programs | headers, include guards, `static`, `extern`, compilation pipeline, modules |
 | 20 | Error Handling | return codes, `errno`, `perror`/`strerror`, error propagation, `goto` cleanup, `setjmp`/`longjmp`, custom error types |
+| 21 | Generics via `void *` | type-erased swap/min, generic comparators, `qsort`, `bsearch`, generic dynamic array, type-tagged variants |
 
 ---
 
