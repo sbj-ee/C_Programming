@@ -8,7 +8,7 @@ A structured C programming learning project covering fundamentals through system
 C_Programming/
 ├── Introduction.md  # Dev environment, build tools, exercise progression
 ├── exercises/       # Progressive programs, each building on the last
-│   ├── 01_hello_world/ … 27_mmap/
+│   ├── 01_hello_world/ … 33_terminal/
 └── topics/          # Markdown reference sheets by concept
     ├── types/           integer types, casts, sizeof, float pitfalls
     ├── pointers/        declaration, arithmetic, void*, function pointers
@@ -73,6 +73,12 @@ make clean
 | 25 | Process Control | `fork`, `waitpid`, `W*` macros, `execvp`, pipes, two-way IPC, `popen`, zombies, `FD_CLOEXEC` |
 | 26 | Sockets | `socket`/`bind`/`listen`/`accept`/`connect`, TCP loopback, UDP datagrams, AF_UNIX, `getaddrinfo`, `SO_REUSEADDR`, `SIGPIPE` |
 | 27 | Memory-Mapped Files | `mmap`/`munmap`, file-backed read/write, `MAP_SHARED`/`MAP_PRIVATE`, anonymous mapping, shared memory across `fork`, `msync`, `ftruncate` |
+| 28 | I/O Multiplexing | `select()`, `poll()`, `epoll_create1`/`epoll_ctl`/`epoll_wait`, `O_NONBLOCK`, `EPOLLET`, multi-client echo server |
+| 29 | C11 Atomics | `_Atomic`, `atomic_fetch_add`, `atomic_compare_exchange`, memory ordering, spinlock (`atomic_flag`), lock-free stack |
+| 30 | Semaphores | `sem_init`/`sem_wait`/`sem_post`/`sem_destroy`, binary and counting semaphores, `sem_timedwait`, named semaphores (`sem_open`/`sem_unlink`) |
+| 31 | Dynamic Loading | `dlopen`/`dlsym`/`dlclose`/`dlerror`, `RTLD_NOW`/`RTLD_LAZY`, `RTLD_DEFAULT`, plugin dispatch pattern, `memcpy` function-pointer cast |
+| 32 | Regular Expressions | `regcomp`/`regexec`/`regfree`/`regerror`, ERE vs BRE, capture groups, `REG_ICASE`/`REG_NEWLINE`, scan loop, IPv4/date/ident patterns |
+| 33 | Terminal I/O | `termios`, canonical vs raw mode, `cfmakeraw`, `tcgetattr`/`tcsetattr`, `VMIN`/`VTIME`, ANSI escape codes, `TIOCGWINSZ`, restore-on-exit |
 
 ---
 

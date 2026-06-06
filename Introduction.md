@@ -52,8 +52,9 @@ make valgrind
 make clean
 ```
 
-Multi-file exercises (19, 24) have their own `Makefile` and are built
-automatically via sub-make.
+Every exercise directory has its own `Makefile`. Multi-file exercises (19, 24)
+and exercises with special link flags use local Makefiles; the root Makefile
+delegates to them automatically.
 
 ### GDB quick reference
 
@@ -84,7 +85,7 @@ Valgrind wraps every memory operation and reports:
 
 ## How the Exercises Are Structured
 
-The 24 exercises form four progressive tiers. Each one introduces new concepts
+The 33 exercises form five progressive tiers. Each one introduces new concepts
 and builds on the ones before it.
 
 ### Tier 1 — Language Fundamentals (01–09)
@@ -138,20 +139,36 @@ Move from single-file programs to real-world C organisation patterns.
 These topics explain *how* the C standard library itself is written.
 After this tier you can read and understand most real C library source code.
 
-### Tier 4 — Systems Programming (23–24)
+### Tier 4 — Systems Programming (23–27)
 
-Interact with the operating system: signals, processes, and threads.
+Interact with the operating system: signals, processes, threads, sockets, and memory mapping.
 
 | Exercise | Topic | What changes from the previous |
 |----------|-------|-------------------------------|
 | 23 | Signal Handling | `signal`/`sigaction`, `sig_atomic_t`, `sigprocmask`, `SIGALRM`, async-signal safety |
 | 24 | POSIX Threads | `pthread_create`/`join`, race conditions, mutex, condition variables, thread attributes |
 | 25 | Process Control | `fork`, `waitpid`, `W*` macros, `execvp`, pipes, two-way IPC, `popen`, zombies, `FD_CLOEXEC` |
-| 26 | Sockets | `socket`/`bind`/`listen`/`accept`/`connect`, TCP loopback, UDP datagrams, AF_UNIX, `getaddrinfo`, `SO_REUSEADDR`, `SIGPIPE` |
-| 27 | Memory-Mapped Files | `mmap`/`munmap`, file-backed read/write, `MAP_SHARED`/`MAP_PRIVATE`, anonymous mapping, shared memory across `fork`, `msync`, `ftruncate` |
+| 26 | Sockets | `socket`/`bind`/`listen`/`accept`/`connect`, TCP loopback, UDP datagrams, AF_UNIX, `getaddrinfo` |
+| 27 | Memory-Mapped Files | `mmap`/`munmap`, file-backed read/write, `MAP_SHARED`/`MAP_PRIVATE`, anonymous mapping, `msync` |
 
 These exercises require POSIX (`_POSIX_C_SOURCE 200809L`). Exercise 24 links with
 `-pthread` and uses its own `Makefile`.
+
+### Tier 5 — Advanced Systems (28–33)
+
+Scalable I/O, lock-free concurrency, dynamic extensibility, and terminal control.
+
+| Exercise | Topic | What changes from the previous |
+|----------|-------|-------------------------------|
+| 28 | I/O Multiplexing | `select`/`poll`/`epoll`, `O_NONBLOCK`, `EPOLLET`, multi-client echo server |
+| 29 | C11 Atomics | `_Atomic`, `atomic_fetch_add`, CAS, memory ordering, spinlock, lock-free stack |
+| 30 | Semaphores | `sem_init`/`sem_wait`/`sem_post`, counting semaphores, `sem_timedwait`, named semaphores |
+| 31 | Dynamic Loading | `dlopen`/`dlsym`/`dlclose`, plugin interface pattern, `RTLD_NOW`/`RTLD_DEFAULT` |
+| 32 | Regular Expressions | `regcomp`/`regexec`/`regfree`, ERE syntax, capture groups, scan loop |
+| 33 | Terminal I/O | `termios`, raw vs canonical mode, `cfmakeraw`, ANSI escape codes, `TIOCGWINSZ` |
+
+Exercises 28–31 use `_GNU_SOURCE` (Linux-specific APIs: epoll, atomics, named semaphores,
+dlopen). Exercises 29–30 link with `-pthread`.
 
 ---
 
