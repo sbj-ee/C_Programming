@@ -146,6 +146,7 @@ Interact with the operating system: signals, processes, and threads.
 |----------|-------|-------------------------------|
 | 23 | Signal Handling | `signal`/`sigaction`, `sig_atomic_t`, `sigprocmask`, `SIGALRM`, async-signal safety |
 | 24 | POSIX Threads | `pthread_create`/`join`, race conditions, mutex, condition variables, thread attributes |
+| 25 | Process Control | `fork`, `waitpid`, `W*` macros, `execvp`, pipes, two-way IPC, `popen`, zombies, `FD_CLOEXEC` |
 
 These exercises require POSIX (`_POSIX_C_SOURCE 200809L`). Exercise 24 links with
 `-pthread` and uses its own `Makefile`.
