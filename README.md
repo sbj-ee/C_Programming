@@ -67,6 +67,7 @@ make clean
 | 17 | Sorting | bubble, insertion, selection, merge, quicksort, stdlib qsort, benchmarks |
 | 18 | Hash Table | djb2 hash, separate chaining, put/get/delete, rehash, word frequency |
 | 19 | Multi-file Programs | headers, include guards, `static`, `extern`, compilation pipeline, modules |
+| 20 | Error Handling | return codes, `errno`, `perror`/`strerror`, error propagation, `goto` cleanup, `setjmp`/`longjmp`, custom error types |
 
 ---
 
