@@ -73,6 +73,7 @@ make clean
 | 23 | Signal Handling | signal table, `signal()`, `sigaction()`, `sig_atomic_t`, `SA_RESTART`, `SA_SIGINFO`, `sigprocmask`, `SIGALRM`/`alarm()`, async-signal safety |
 | 24 | POSIX Threads | `pthread_create`/`join`, race conditions, `pthread_mutex_t`, `pthread_cond_t`, producer/consumer, thread attributes, detached threads, deadlock |
 | 25 | Process Control | `fork`, `waitpid`, `W*` macros, `execvp`, pipes, two-way IPC, `popen`, zombies, `FD_CLOEXEC` |
+| 26 | Sockets | `socket`/`bind`/`listen`/`accept`/`connect`, TCP loopback, UDP datagrams, AF_UNIX, `getaddrinfo`, `SO_REUSEADDR`, `SIGPIPE` |
 
 ---
 
