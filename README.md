@@ -71,6 +71,7 @@ make clean
 | 21 | Generics via `void *` | type-erased swap/min, generic comparators, `qsort`, `bsearch`, generic dynamic array, type-tagged variants |
 | 22 | Variadic Functions | `va_list`, `va_start`, `va_arg`, `va_end`, `va_copy`, sentinel termination, `vsnprintf` wrappers, `_Generic`, tagged-union type safety |
 | 23 | Signal Handling | signal table, `signal()`, `sigaction()`, `sig_atomic_t`, `SA_RESTART`, `SA_SIGINFO`, `sigprocmask`, `SIGALRM`/`alarm()`, async-signal safety |
+| 24 | POSIX Threads | `pthread_create`/`join`, race conditions, `pthread_mutex_t`, `pthread_cond_t`, producer/consumer, thread attributes, detached threads, deadlock |
 
 ---
 
