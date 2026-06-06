@@ -64,6 +64,7 @@ make clean
 | 14 | Preprocessor | object/function-like macros, `#`, `##`, variadic, `#ifdef`, include guards |
 | 15 | Binary Search Tree | insert, search, delete (3 cases), traversals, height, visualisation |
 | 16 | Stack & Queue | LIFO/FIFO, linked-list implementation, bracket balancing, BFS |
+| 17 | Sorting | bubble, insertion, selection, merge, quicksort, stdlib qsort, benchmarks |
 
 ---
 
