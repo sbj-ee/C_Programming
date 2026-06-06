@@ -61,6 +61,7 @@ make clean
 | 11 | Function Pointers | syntax, callbacks, dispatch tables, returning pointers, `qsort` |
 | 12 | Enums & Unions | `enum`, bit-flag enums, `union`, tagged unions, variant types |
 | 13 | Bit Manipulation | operators, set/clear/toggle/test, popcount, bitfields, packing |
+| 14 | Preprocessor | object/function-like macros, `#`, `##`, variadic, `#ifdef`, include guards |
 
 ---
 
