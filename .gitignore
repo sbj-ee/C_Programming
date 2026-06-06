@@ -1,8 +1,12 @@
-# Compiled binaries
+# Compiled binaries (allow source files and local Makefiles)
 exercises/*/*
 !exercises/*/*.c
+!exercises/*/*.h
+!exercises/*/Makefile
 topics/*/*
 !topics/*/*.c
+!topics/*/*.h
+!topics/*/Makefile
 
 # Object files
 *.o
