@@ -66,6 +66,7 @@ make clean
 | 16 | Stack & Queue | LIFO/FIFO, linked-list implementation, bracket balancing, BFS |
 | 17 | Sorting | bubble, insertion, selection, merge, quicksort, stdlib qsort, benchmarks |
 | 18 | Hash Table | djb2 hash, separate chaining, put/get/delete, rehash, word frequency |
+| 19 | Multi-file Programs | headers, include guards, `static`, `extern`, compilation pipeline, modules |
 
 ---
 
