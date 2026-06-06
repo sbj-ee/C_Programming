@@ -6,6 +6,7 @@ exercises/*/*
 topics/*/*
 !topics/*/*.c
 !topics/*/*.h
+!topics/*/*.md
 !topics/*/Makefile
 
 # Object files

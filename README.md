@@ -1,29 +1,27 @@
 # C Programming
 
-A structured C programming learning project covering fundamentals through data structures.
+A structured C programming learning project covering fundamentals through systems programming.
 
 ## Layout
 
 ```
 C_Programming/
-├── exercises/      # Progressive programs, each building on the last
-│   ├── 01_hello_world/
-│   ├── 02_variables_and_types/
-│   ├── 03_control_flow/
-│   ├── 04_functions/
-│   ├── 05_arrays_and_strings/
-│   ├── 06_pointers/
-│   ├── 07_structs/
-│   ├── 08_memory_management/
-│   ├── 09_file_io/
-│   └── 10_linked_lists/
-└── topics/         # Reference snippets by concept
-    ├── pointers/
-    ├── memory/
-    ├── strings/
-    ├── structs/
-    ├── file_io/
-    └── preprocessor/
+├── Introduction.md  # Dev environment, build tools, exercise progression
+├── exercises/       # Progressive programs, each building on the last
+│   ├── 01_hello_world/ … 27_mmap/
+└── topics/          # Markdown reference sheets by concept
+    ├── types/           integer types, casts, sizeof, float pitfalls
+    ├── pointers/        declaration, arithmetic, void*, function pointers
+    ├── memory/          malloc/free, ownership, goto cleanup, valgrind
+    ├── strings/         null termination, key functions, safe patterns
+    ├── structs/         typedef, designated init, nested, bit fields
+    ├── file_io/         FILE*, fopen/fread/fwrite, POSIX fd API
+    ├── preprocessor/    macros, #/##, variadic, include guards, X-macros
+    ├── error_handling/  return codes, errno, goto cleanup, setjmp
+    ├── concurrency/     pthreads, mutex, condition variable, pitfalls
+    ├── processes/       fork, exec, waitpid, pipes, popen, zombies
+    ├── sockets/         TCP/UDP skeleton, framing, AF_UNIX, getaddrinfo
+    └── mmap/            file-backed, anonymous, MAP_SHARED, msync
 ```
 
 ## Build
