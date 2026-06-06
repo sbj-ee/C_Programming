@@ -1,0 +1,13 @@
+# Compiled binaries
+exercises/*/*
+!exercises/*/*.c
+topics/*/*
+!topics/*/*.c
+
+# Object files
+*.o
+*.a
+*.so
+
+# Build artifacts
+*.d
