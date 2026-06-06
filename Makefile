@@ -11,7 +11,7 @@ all: $(BINS)
 
 # Pattern rule: compile any .c to a binary alongside it
 %: %.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@ -lm
 
 clean:
 	@find exercises topics -type f ! -name '*.c' -delete
