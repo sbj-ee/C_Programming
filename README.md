@@ -58,6 +58,7 @@ make clean
 | 08 | Memory Management | `malloc`, `calloc`, `realloc`, `free`, valgrind |
 | 09 | File I/O | `fopen`, `fclose`, `fread`, `fwrite`, `fprintf` |
 | 10 | Linked Lists | singly linked list with insert, delete, traverse |
+| 11 | Function Pointers | syntax, callbacks, dispatch tables, returning pointers, `qsort` |
 
 ---
 
