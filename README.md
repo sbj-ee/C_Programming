@@ -69,6 +69,7 @@ make clean
 | 19 | Multi-file Programs | headers, include guards, `static`, `extern`, compilation pipeline, modules |
 | 20 | Error Handling | return codes, `errno`, `perror`/`strerror`, error propagation, `goto` cleanup, `setjmp`/`longjmp`, custom error types |
 | 21 | Generics via `void *` | type-erased swap/min, generic comparators, `qsort`, `bsearch`, generic dynamic array, type-tagged variants |
+| 22 | Variadic Functions | `va_list`, `va_start`, `va_arg`, `va_end`, `va_copy`, sentinel termination, `vsnprintf` wrappers, `_Generic`, tagged-union type safety |
 
 ---
 
