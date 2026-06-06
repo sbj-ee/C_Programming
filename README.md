@@ -9,19 +9,25 @@ C_Programming/
 ├── Introduction.md  # Dev environment, build tools, exercise progression
 ├── exercises/       # Progressive programs, each building on the last
 │   ├── 01_hello_world/ … 33_terminal/
-└── topics/          # Markdown reference sheets by concept
-    ├── types/           integer types, casts, sizeof, float pitfalls
-    ├── pointers/        declaration, arithmetic, void*, function pointers
-    ├── memory/          malloc/free, ownership, goto cleanup, valgrind
-    ├── strings/         null termination, key functions, safe patterns
-    ├── structs/         typedef, designated init, nested, bit fields
-    ├── file_io/         FILE*, fopen/fread/fwrite, POSIX fd API
-    ├── preprocessor/    macros, #/##, variadic, include guards, X-macros
-    ├── error_handling/  return codes, errno, goto cleanup, setjmp
-    ├── concurrency/     pthreads, mutex, condition variable, pitfalls
-    ├── processes/       fork, exec, waitpid, pipes, popen, zombies
-    ├── sockets/         TCP/UDP skeleton, framing, AF_UNIX, getaddrinfo
-    └── mmap/            file-backed, anonymous, MAP_SHARED, msync
+└── topics/              # Markdown reference sheets by concept
+    ├── types/               integer types, casts, sizeof, float pitfalls
+    ├── pointers/            declaration, arithmetic, void*, function pointers
+    ├── memory/              malloc/free, ownership, goto cleanup, valgrind
+    ├── strings/             null termination, key functions, safe patterns
+    ├── structs/             typedef, designated init, nested, bit fields
+    ├── file_io/             FILE*, fopen/fread/fwrite, POSIX fd API
+    ├── preprocessor/        macros, #/##, variadic, include guards, X-macros
+    ├── error_handling/      return codes, errno, goto cleanup, setjmp
+    ├── concurrency/         pthreads, mutex, condition variable, pitfalls
+    ├── processes/           fork, exec, waitpid, pipes, popen, zombies
+    ├── sockets/             TCP/UDP skeleton, framing, AF_UNIX, getaddrinfo
+    ├── mmap/                file-backed, anonymous, MAP_SHARED, msync
+    ├── io_multiplexing/     select/poll/epoll, O_NONBLOCK, EPOLLET
+    ├── atomics/             _Atomic, CAS, memory ordering, lock-free stack
+    ├── semaphores/          unnamed/named, counting, timedwait, cross-process
+    ├── dynamic_loading/     dlopen/dlsym, plugin pattern, visibility, ABI
+    ├── regex/               regcomp/regexec, ERE syntax, scan loop, patterns
+    └── terminal/            termios, raw mode, ANSI escapes, TIOCGWINSZ
 ```
 
 ## Build
