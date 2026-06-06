@@ -63,6 +63,7 @@ make clean
 | 13 | Bit Manipulation | operators, set/clear/toggle/test, popcount, bitfields, packing |
 | 14 | Preprocessor | object/function-like macros, `#`, `##`, variadic, `#ifdef`, include guards |
 | 15 | Binary Search Tree | insert, search, delete (3 cases), traversals, height, visualisation |
+| 16 | Stack & Queue | LIFO/FIFO, linked-list implementation, bracket balancing, BFS |
 
 ---
 
