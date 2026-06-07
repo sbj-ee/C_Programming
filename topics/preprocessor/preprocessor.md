@@ -50,7 +50,9 @@ FIELD(my, value)     →  my_value
 
 // Common use: enum ↔ string table via X-macro
 #define COLORS  X(RED) X(GREEN) X(BLUE)
+#define X(c) c,
 typedef enum { COLORS } Color;          // RED=0, GREEN=1, BLUE=2
+#undef X
 const char *color_names[] = {
 #define X(c) #c,
     COLORS

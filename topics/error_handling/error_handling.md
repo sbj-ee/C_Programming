@@ -182,5 +182,5 @@ int main(void) {
 | Not checking return values | Check every call that can fail |
 | Overwriting errno before reading it | Save to a local immediately |
 | Returning error code from a function that also needs a pointer | Use an out-parameter: `int fn(T **out)` |
-| Leaking resources on early return | Use goto cleanup or RAII-style wrappers |
+| Leaking resources on early return | Use goto cleanup pattern (C approximation of RAII — Resource Acquisition Is Initialisation) |
 | Using `exit()` in library code | Return an error code instead |

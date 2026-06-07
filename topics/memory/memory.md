@@ -6,7 +6,7 @@
 |--------|----------|----------------|---------|
 | Stack | Until function returns | Compile time | `int x;` |
 | Heap | Until `free()` | Runtime | `malloc(n)` |
-| Static / BSS | Entire program | Compile time | `static int x;` `global int y;` |
+| Static / BSS (Block Started by Symbol) | Entire program | Compile time | `static int x;` `int y;` (file-scope) |
 | Read-only | Entire program | Compile time | `"string literal"` |
 
 The stack is fast but limited (~1–8 MB). Use the heap for large or

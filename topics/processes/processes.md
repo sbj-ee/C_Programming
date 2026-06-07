@@ -90,6 +90,7 @@ if (pid == 0) {
     close(fd[1]);                    // close unused write end
     char buf[128];
     ssize_t n = read(fd[0], buf, sizeof buf - 1);
+    if (n < 0) { perror("read"); _exit(1); }
     buf[n] = '\0';
     printf("child: %s\n", buf);
     close(fd[0]);

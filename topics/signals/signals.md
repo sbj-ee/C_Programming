@@ -20,7 +20,7 @@ Common signals:
 | `SIGTERM` | Terminate | `kill pid` |
 | `SIGKILL` | Terminate (uncatchable) | `kill -9 pid` |
 | `SIGSEGV` | Core dump | Null / invalid pointer dereference |
-| `SIGFPE` | Core dump | Division by zero, integer overflow |
+| `SIGFPE` | Core dump | Integer divide-by-zero, FP (Floating-Point) exceptions |
 | `SIGALRM` | Terminate | `alarm()` timer expired |
 | `SIGCHLD` | Ignore | Child process stopped or exited |
 | `SIGUSR1` | Terminate | Application-defined |

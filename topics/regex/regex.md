@@ -24,7 +24,7 @@ rc = regexec(&re, string, 10, pmatch, eflags);
 /* rc == 0: match; rc == REG_NOMATCH: no match; other: error */
 
 /* 3. Free */
-regfree(&re);            /* always call, even if regcomp failed */
+regfree(&re);            /* call only after successful regcomp; content is undefined on failure */
 ```
 
 ## Compile flags (cflags)
@@ -108,7 +108,7 @@ while (regexec(&re, cursor, 1, &m, eflags) == 0) {
 | `[^abc]` | Negated character class |
 | `[a-z]` | Range |
 | `(abc)` | Capture group |
-| `a\|b` | Alternation |
+| `a|b` | Alternation (`a\|b` in BRE (Basic RE) — backslash required) |
 | `\` | Escape next metacharacter |
 
 **POSIX ERE has no `\d`, `\w`, `\s`** — use `[0-9]`, `[A-Za-z0-9_]`, `[ \t]`.

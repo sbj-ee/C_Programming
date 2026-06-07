@@ -58,6 +58,7 @@ if (connect(fd, (struct sockaddr *)&addr, sizeof addr) < 0) {
 send(fd, "hello", 5, 0);
 char buf[64];
 ssize_t n = recv(fd, buf, sizeof buf - 1, 0);
+if (n <= 0) { close(fd); return; }   // 0 = peer closed; -1 = error
 buf[n] = '\0';
 close(fd);
 ```

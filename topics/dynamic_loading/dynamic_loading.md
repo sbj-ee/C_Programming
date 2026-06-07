@@ -3,7 +3,7 @@
 Load shared libraries at runtime; resolve symbols by name. Enables plugin
 architectures where new functionality is added without recompiling.
 
-Requires `#define _GNU_SOURCE` and `<dlfcn.h>`. Link with **`-ldl`**.
+Requires `<dlfcn.h>`. Link with **`-ldl`**. Add `#define _GNU_SOURCE` only when using `RTLD_NEXT` (a GNU extension).
 
 ## Key functions
 
@@ -116,6 +116,8 @@ void *d = dlsym(h, "plugin_destroy");
 memcpy(&create,  &c, sizeof create);
 memcpy(&destroy, &d, sizeof destroy);
 
+const char *input = "test input";
+char        output[256];               // array, so sizeof gives buffer size
 Plugin *p = create();
 p->init();
 p->process(input, output, sizeof output);

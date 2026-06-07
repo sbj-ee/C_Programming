@@ -7,7 +7,7 @@ Requires `#define _GNU_SOURCE` (for epoll) and `<sys/select.h>`, `<poll.h>`, `<s
 
 | API | Standard | FD limit | Cost per wakeup | Use when |
 |-----|----------|----------|-----------------|----------|
-| `select()` | POSIX | `FD_SETSIZE` (1024) | O(max-fd) | Portability, handful of fds |
+| `select()` | POSIX (Portable Operating System Interface) | `FD_SETSIZE` (1024) | O(max-fd) | Portability, handful of fds |
 | `poll()` | POSIX | unlimited | O(nfds) | POSIX, moderate fd count |
 | `epoll()` | Linux | unlimited | O(ready events) | High fd count, production servers |
 

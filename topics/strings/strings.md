@@ -83,6 +83,7 @@ if (*end != '\0') { /* parse error */ }
 ```c
 // Idiom: copy at most sizeof(dst)-1 chars, always null-terminate
 void safe_copy(char *dst, const char *src, size_t dstsize) {
+    if (dstsize == 0) return;   // guard: dstsize-1 wraps to SIZE_MAX on underflow
     size_t n = dstsize - 1;
     strncpy(dst, src, n);
     dst[n] = '\0';
@@ -115,7 +116,9 @@ void append(const char *s) {
     size_t add = strlen(s);
     if (len + add + 1 > cap) {
         cap = (len + add + 1) * 2;
-        buf = realloc(buf, cap);
+        char *tmp = realloc(buf, cap);
+        if (!tmp) { free(buf); buf = NULL; return; }  // OOM guard
+        buf = tmp;
     }
     memcpy(buf + len, s, add + 1);
     len += add;
@@ -129,6 +132,6 @@ void append(const char *s) {
 | `sprintf` with no size limit | Use `snprintf(buf, sizeof buf, ...)` |
 | `strcpy` into undersized buffer | Check `strlen(src) < sizeof(dst)` first |
 | Modifying a string literal (`char *s = "hi"; s[0]='x'`) | Use `char s[] = "hi"` |
-| `strncpy` missing null terminator | Always set `dst[n-1] = '\0'` explicitly |
+| `strncpy` missing null terminator | After `strncpy(dst, src, sizeof dst - 1)`, always set `dst[sizeof dst - 1] = '\0'` |
 | Comparing strings with `==` | Use `strcmp(a, b) == 0` |
 | `strtol` with no error check | Check `errno` and `*end` after the call |
