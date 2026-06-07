@@ -312,9 +312,9 @@ static void section_custom_errors(void) {
         int v;
         ErrCode e = parse_percent(cases[i].s, &v);
         if (e == OK)
-            printf("  parse_percent(\"%-5s) = %d\n", cases[i].s, v);
+            printf("  parse_percent(\"%-5s\") = %d\n", cases[i].s, v);
         else
-            printf("  parse_percent(\"%-5s) -> %s\n", cases[i].s, err_str(e));
+            printf("  parse_percent(\"%-5s\") -> %s\n", cases[i].s, err_str(e));
     }
     printf("\n");
 }

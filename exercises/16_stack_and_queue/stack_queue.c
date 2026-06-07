@@ -253,6 +253,7 @@ int brackets_balanced(const char *s) {
     for (int i = 0; s[i]; i++) {
         char c = s[i];
         if (c == '(' || c == '[' || c == '{') {
+            if (top >= 255) return 0;   /* stack full — treat as unbalanced */
             stk[++top] = c;
         } else if (c == ')' || c == ']' || c == '}') {
             if (top < 0) return 0;   /* closer with no matching opener */

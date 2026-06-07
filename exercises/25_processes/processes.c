@@ -210,6 +210,7 @@ static void section_pipe(void) {
         close(p[1]);                   /* child does not write */
         char buf[128];
         ssize_t n = read(p[0], buf, sizeof buf - 1);
+        if (n < 0) n = 0;
         buf[n] = '\0';
         printf("  child received: \"%s\"\n", buf);
         close(p[0]);
@@ -236,6 +237,7 @@ static void section_pipe(void) {
 
         char buf[128];
         ssize_t n = read(to_child[0], buf, sizeof buf - 1);
+        if (n < 0) n = 0;
         buf[n] = '\0';
 
         char resp[160];

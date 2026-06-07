@@ -344,7 +344,7 @@ static void write_int(int fd, int n) {
     buf[i] = '\0';
     do { buf[--i] = '0' + (n % 10); n /= 10; } while (n > 0);
     if (neg) buf[--i] = '-';
-    write(fd, buf + i, strlen(buf + i));
+    write(fd, buf + i, (size_t)((int)(sizeof buf) - 1 - i)); /* avoid strlen: not on POSIX async-signal-safe list */
 }
 
 static volatile sig_atomic_t g_sigusr1_count = 0;

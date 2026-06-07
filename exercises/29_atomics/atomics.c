@@ -59,7 +59,7 @@ static void section1_types(void) {
 #define NTHREADS  4
 #define ITERS     500000
 
-static long              g_unsafe  = 0;   /* volatile but NOT atomic */
+static long              g_unsafe  = 0;   /* NOT volatile, NOT atomic — demonstrates data race */
 static atomic_long       g_safe    = 0;
 
 static void *unsafe_worker(void *arg) {

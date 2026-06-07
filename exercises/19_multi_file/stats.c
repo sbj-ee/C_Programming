@@ -15,7 +15,7 @@ double stats_mean(const double *arr, int n) {
 double stats_variance(const double *arr, int n) {
     stats_calls++;
     double m = stats_mean(arr, n);
-    stats_calls--;   /* don't double-count the mean call */
+    stats_calls--;   /* undo stats_mean's own increment so variance counts as one call */
     double sum = 0;
     for (int i = 0; i < n; i++) sum += (arr[i] - m) * (arr[i] - m);
     return sum / n;

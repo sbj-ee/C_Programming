@@ -139,8 +139,9 @@ static const BinaryFn op_fn[OP_COUNT] = {
     [OP_DIV] = do_div,
 };
 
-/* Compile-time check: if a new Op is added without updating op_fn,
-   the program won't compile. */
+/* Verifies array SIZE matches OP_COUNT, but does NOT catch missing entries:
+ * a new Op value with no designated initialiser gets a NULL slot and will
+ * crash at runtime in apply(). The assert() in apply() provides the runtime guard. */
 _Static_assert(sizeof(op_fn) / sizeof(op_fn[0]) == OP_COUNT,
                "op_fn table size must match OP_COUNT");
 

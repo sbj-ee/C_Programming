@@ -181,7 +181,10 @@ int main(void) {
            u.bytes[3], u.bytes[2], u.bytes[1], u.bytes[0]);
     printf("sizeof(MultiView) = %zu  (size of largest member)\n", sizeof(u));
 
-    u.f = 1.0f;         /* now float is valid; int reading is undefined */
+    u.f = 1.0f;
+    /* Reading u.i after writing u.f is implementation-defined (not strictly portable),
+     * but GCC and Clang explicitly support union type-punning as an extension.
+     * Strictly portable alternative: uint32_t bits; memcpy(&bits, &u.f, sizeof bits); */
     printf("as float: %f  (bits: 0x%08X)\n", u.f, u.i);
 
     /* --- Tagged union: Value --- */

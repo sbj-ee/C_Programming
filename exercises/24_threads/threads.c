@@ -26,6 +26,7 @@
 #include <pthread.h>
 #include <unistd.h>    /* sysconf */
 #include <stdint.h>
+#include <stdatomic.h>
 
 /* ──────────────────────────────────────────────────────────
  * Section 1: Thread basics
@@ -249,7 +250,7 @@ static void *producer(void *arg) {
     BQueue *q = arg;
     for (int i = 0; i < NITEMS; i++) {
         bq_push(q, i);
-        printf("  P: pushed %2d  (queue size %d)\n", i, q->count);
+        printf("  P: pushed %2d  (queue size %d)\n", i, q->count);  /* display-only race; count may be stale */
     }
     bq_close(q);
     return NULL;
@@ -298,7 +299,7 @@ static void section_condvar(void) {
  *   - Use when you never need the return value and fire-and-forget
  * ────────────────────────────────────────────────────────── */
 
-static volatile int g_detached_done = 0;
+static atomic_int g_detached_done = 0;   /* volatile alone is not a sync mechanism in C11 */
 
 static void *detached_fn(void *arg) {
     int n = *(int *)arg;

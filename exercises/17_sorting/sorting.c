@@ -164,8 +164,14 @@ void quick_sort(int *arr, int n) {
 /* ================================================================
    STDLIB QSORT — generic via function pointer comparator
    ================================================================ */
-static int cmp_asc (const void *a, const void *b) { return *(int*)a - *(int*)b; }
-static int cmp_desc(const void *a, const void *b) { return *(int*)b - *(int*)a; }
+static int cmp_asc (const void *a, const void *b) {
+    int ia = *(const int *)a, ib = *(const int *)b;
+    return (ia > ib) - (ia < ib);   /* subtraction overflows for large mixed-sign values */
+}
+static int cmp_desc(const void *a, const void *b) {
+    int ia = *(const int *)a, ib = *(const int *)b;
+    return (ib > ia) - (ib < ia);
+}
 
 typedef struct { char name[16]; int score; } Player;
 static int cmp_player_score(const void *a, const void *b) {

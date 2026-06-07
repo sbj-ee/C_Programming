@@ -68,10 +68,12 @@ BinaryOp get_operation(char op) {
 
 /* Comparators for qsort */
 int cmp_int_asc (const void *a, const void *b) {
-    return (*(int *)a - *(int *)b);
+    int ia = *(const int *)a, ib = *(const int *)b;
+    return (ia > ib) - (ia < ib);   /* subtraction form overflows for large values */
 }
 int cmp_int_desc(const void *a, const void *b) {
-    return (*(int *)b - *(int *)a);
+    int ia = *(const int *)a, ib = *(const int *)b;
+    return (ib > ia) - (ib < ia);
 }
 int cmp_str     (const void *a, const void *b) {
     return strcmp(*(const char **)a, *(const char **)b);

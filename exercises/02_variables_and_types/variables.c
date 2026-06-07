@@ -1,11 +1,12 @@
 #include <stdio.h>
+#include <limits.h>
 
 int main(void) {
 
     /* --- Integer types --- */
     char   c  = 'A';          /* 1 byte, -128..127 */
     short  s  = 32000;        /* at least 2 bytes */
-    int    i  = -2147483648;  /* at least 4 bytes, most common general-purpose type */
+    int    i  = INT_MIN;       /* at least 4 bytes; use INT_MIN — literal -2147483648 overflows before negation */
     long   l  = 9876543210L;  /* at least 4 bytes (8 on most 64-bit systems) */
 
     printf("=== Integer types ===\n");
