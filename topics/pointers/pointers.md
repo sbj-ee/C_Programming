@@ -15,6 +15,15 @@ int *uninit;       // NOT initialised — reading *uninit is UB
 int *null = NULL;  // safe "no value" sentinel; dereferencing is a crash
 ```
 
+**UB — Undefined Behaviour:** the C standard places no requirement on what
+the program does. The compiler is allowed to assume UB never happens, so
+it may delete the offending code, generate nonsense, or appear to work on
+one build and crash silently on another. Common sources involving pointers:
+dereferencing an uninitialised or NULL pointer, accessing memory out of
+bounds, reading a freed block, and returning a pointer to a local variable.
+`-Wall -Wextra` and Valgrind catch many cases; `-fsanitize=address,undefined`
+(AddressSanitizer + UBSan) catches almost all of them at runtime.
+
 ## Pointer arithmetic
 
 Arithmetic on a pointer steps by `sizeof(T)`, not by bytes.
