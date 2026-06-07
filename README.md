@@ -388,7 +388,234 @@ committing to catch anything ASan misses.
 
 ---
 
-## Appendix C: Creating Libraries
+## Appendix C: Debugging with GDB
+
+GDB (GNU Debugger) lets you pause a running program, inspect memory and
+variables, step through code line by line, and understand exactly why it
+crashed or produced the wrong result. Always compile with `-g` to embed
+debug symbols.
+
+### Starting GDB
+
+```bash
+gdb ./myprog                      # load program
+gdb ./myprog core                 # load program with a core dump
+gdb --args ./myprog arg1 arg2     # pass arguments at launch
+gdb -q ./myprog                   # quiet mode — suppress banner
+```
+
+Inside GDB, pass arguments with `set args` before `run`:
+
+```
+(gdb) set args input.txt 42
+(gdb) run
+```
+
+### Breakpoints
+
+```
+(gdb) break main                  # break at function entry
+(gdb) break myfile.c:42           # break at file:line
+(gdb) break func if x > 10       # conditional breakpoint
+(gdb) info breakpoints            # list all breakpoints
+(gdb) disable 2                   # disable breakpoint #2
+(gdb) enable 2                    # re-enable it
+(gdb) delete 2                    # delete breakpoint #2
+(gdb) clear func                  # delete all breakpoints at func
+```
+
+### Running and stepping
+
+```
+(gdb) run                         # start (or restart) the program
+(gdb) continue   (c)              # resume until next breakpoint
+(gdb) next       (n)              # step over — execute one line
+(gdb) step       (s)              # step into — descend into calls
+(gdb) finish                      # run until current function returns
+(gdb) until 55                    # run until line 55 (skip loops)
+(gdb) jump 60                     # jump execution to line 60
+```
+
+### Inspecting variables and memory
+
+```
+(gdb) print x                     # print value of x
+(gdb) print *ptr                  # dereference a pointer
+(gdb) print arr[0]@10             # print 10 elements of arr[]
+(gdb) print (int *)0x4a5b080      # cast and print a raw address
+(gdb) display x                   # print x after every step
+(gdb) undisplay 1                 # remove display #1
+(gdb) info locals                 # all local variables
+(gdb) info args                   # function arguments
+(gdb) whatis x                    # show type of x
+(gdb) ptype struct Node           # show full struct layout
+```
+
+Examine raw memory:
+
+```
+(gdb) x/10d ptr                   # 10 decimal words starting at ptr
+(gdb) x/10x ptr                   # 10 hex words
+(gdb) x/10c ptr                   # 10 chars (useful for strings)
+(gdb) x/10i $pc                   # 10 disassembled instructions at PC
+```
+
+Format letters for `x`: `d` decimal, `x` hex, `o` octal, `c` char,
+`s` string, `f` float, `i` instruction. Size letters: `b` byte,
+`h` halfword (2), `w` word (4), `g` giant (8).
+
+### The call stack
+
+```
+(gdb) backtrace      (bt)         # show full call stack
+(gdb) backtrace 5                 # show top 5 frames only
+(gdb) frame 2                     # switch to frame #2
+(gdb) info frame                  # details of current frame
+(gdb) up                          # move one frame toward caller
+(gdb) down                        # move one frame toward callee
+```
+
+### Watchpoints — break on data change
+
+```
+(gdb) watch x                     # break when x is written
+(gdb) rwatch x                    # break when x is read
+(gdb) awatch x                    # break on read or write
+(gdb) info watchpoints
+```
+
+Watchpoints are invaluable for tracking down silent memory corruption —
+set one on the variable that ends up with the wrong value.
+
+### Signals
+
+```
+(gdb) info signals                # list all signals and GDB's handling
+(gdb) handle SIGINT stop          # stop when SIGINT arrives
+(gdb) handle SIGPIPE nostop pass  # ignore SIGPIPE, pass to program
+```
+
+### Investigating a crash (SIGSEGV)
+
+When a program crashes under GDB it stops at the faulting instruction:
+
+```
+(gdb) run
+Program received signal SIGSEGV, Segmentation fault.
+0x000000000010916b in main () at heap.c:23
+
+(gdb) backtrace           # see the call stack at crash point
+(gdb) info locals         # check local variable values
+(gdb) print ptr           # is this NULL or dangling?
+(gdb) x/4x ptr            # what is actually at that address?
+```
+
+### Core dumps
+
+A core dump is a snapshot of memory at crash time. Enable and use them:
+
+```bash
+ulimit -c unlimited               # allow core dumps in this shell
+./myprog                          # run until it crashes → writes core
+gdb ./myprog core                 # load the core dump
+```
+
+Inside GDB, `backtrace` immediately shows the crash location without
+needing to reproduce the bug.
+
+### Threads
+
+```
+(gdb) info threads                # list all threads
+(gdb) thread 2                    # switch to thread #2
+(gdb) thread apply all bt         # backtrace every thread at once
+(gdb) set scheduler-locking on    # only step the current thread
+```
+
+### Pretty-printing structs and pointers
+
+GDB prints structs automatically. For linked data structures:
+
+```
+(gdb) print *node                 # one node
+(gdb) print *node->next           # follow the link
+(gdb) print *(int *)p->data       # cast void* data field
+```
+
+### Useful settings
+
+Put these in `~/.gdbinit` for every session:
+
+```
+set print pretty on               # indent nested structs
+set print array on                # one element per line for arrays
+set print array-indexes on        # show array index before each element
+set pagination off                # don't pause on long output
+set history save on               # persist command history
+```
+
+### TUI — text-mode source viewer
+
+```bash
+gdb -tui ./myprog                 # start with TUI
+```
+
+Inside GDB:
+
+```
+(gdb) layout src                  # source + command window
+(gdb) layout asm                  # disassembly window
+(gdb) layout regs                 # registers + source
+(gdb) focus cmd                   # direct keyboard input to command window
+Ctrl-X Ctrl-A                     # toggle TUI on/off
+```
+
+### Common workflow
+
+```bash
+# 1. Build with debug symbols
+make
+
+# 2. Run under GDB
+gdb ./exercises/08_memory_management/memory_management
+
+# 3. Set a breakpoint and run
+(gdb) break main
+(gdb) run
+
+# 4. Step through and inspect
+(gdb) next
+(gdb) print ptr
+(gdb) step
+
+# 5. Let it crash, then examine
+(gdb) continue
+(gdb) backtrace
+(gdb) info locals
+```
+
+### Quick reference card
+
+| Command | Short | What it does |
+|---------|-------|-------------|
+| `run` | `r` | Start program |
+| `continue` | `c` | Resume to next breakpoint |
+| `next` | `n` | Step over one line |
+| `step` | `s` | Step into function |
+| `finish` | | Run to end of current function |
+| `break loc` | `b` | Set breakpoint at location |
+| `delete N` | `d N` | Delete breakpoint N |
+| `print expr` | `p` | Print expression |
+| `display expr` | | Print expr after every step |
+| `backtrace` | `bt` | Show call stack |
+| `frame N` | `f N` | Switch to stack frame N |
+| `info locals` | | Show local variables |
+| `watch expr` | | Break on write to expr |
+| `quit` | `q` | Exit GDB |
+
+---
+
+## Appendix D: Creating Libraries
 
 A **library** bundles compiled object files so other programs can link against
 them without recompiling the source. C has two kinds.
