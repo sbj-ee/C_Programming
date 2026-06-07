@@ -7,7 +7,7 @@ These exercises are written for **Linux** with **GCC** and target the **C11 stan
 ### Compiler
 
 ```bash
-gcc --version       # should be GCC 10+ for full C11 support
+gcc --version       # GCC 5+ has full C11 support; GCC 10+ recommended
 ```
 
 All code is compiled with:
@@ -52,12 +52,11 @@ make valgrind
 make clean
 ```
 
-Every exercise directory has its own `Makefile`. Multi-file exercises and
-exercises with special link flags use local Makefiles; the root Makefile
-delegates to them automatically. These include exercises 19 (multi-file), 24
-(threads, `-pthread`), 29 (atomics, `-pthread`), 30 (semaphores, `-pthread`),
-and 31 (dynamic loading, `-fPIC -shared` for the plugin, `-ldl` for the
-loader).
+Every exercise directory has its own `Makefile`; the root Makefile discovers
+and delegates to all of them. Most are simple single-source builds; exercises
+19 (multi-file), 24 (threads, `-pthread`), 29 (atomics, `-pthread`), 30
+(semaphores, `-pthread`), and 31 (dynamic loading, `-fPIC -shared` for the
+plugin, `-ldl` for the loader) require special flags or multiple sources.
 
 ### GDB quick reference
 
@@ -172,10 +171,12 @@ and advanced enum patterns.
 | 33 | Terminal I/O | `termios`, raw vs canonical mode, `cfmakeraw`, ANSI escape codes, `TIOCGWINSZ` |
 | 34 | Enums in Depth | X-macros, sentinel/COUNT pattern, enum-indexed dispatch tables, state machines, `_Static_assert` |
 
-Exercises 28–31 and 33 use `_GNU_SOURCE` (Linux-specific APIs: epoll, C11
-atomics, named semaphores, dlopen, and raw terminal control). Exercise 32 uses
-`_POSIX_C_SOURCE 200809L` (standard POSIX regex API). Exercises 29 and 30 link
-with `-pthread`.
+Exercises 28–31 and 33 define `_GNU_SOURCE` to unlock additional APIs:
+`epoll` (Linux-specific), `dlopen`/`sem_open` (POSIX — Portable Operating
+System Interface), and `cfmakeraw` for raw terminal control. C11 atomics
+(`<stdatomic.h>`) used in exercise 29 are part of the ISO C11 standard and
+are portable. Exercise 32 uses `_POSIX_C_SOURCE 200809L` (standard POSIX
+regex API). Exercises 29 and 30 link with `-pthread`.
 
 ---
 

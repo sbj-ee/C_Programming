@@ -40,7 +40,7 @@ C_Programming/
 make
 
 # Build a single file
-gcc -Wall -Wextra -std=c11 -g exercises/01_hello_world/hello.c -o hello
+gcc -Wall -Wextra -Wpedantic -std=c11 -g exercises/01_hello_world/hello.c -o hello
 
 # Remove all compiled binaries
 make clean
@@ -170,8 +170,9 @@ non-managed exercise without listing them individually.
 
 **Local Makefiles**
 
-Exercises with multiple source files or special link flags use their own
-`Makefile` and are excluded from the root pattern rule:
+Every exercise directory has its own `Makefile`; the root Makefile discovers
+and delegates to all of them. The five below are notable for requiring
+non-default flags:
 
 | Exercise | Reason |
 |----------|--------|

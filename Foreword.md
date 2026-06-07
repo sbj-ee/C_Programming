@@ -43,7 +43,8 @@ They are the distillation of decades of thinking about how programs should
 communicate and compose.
 
 The exercises in Tiers 4 and 5 (signals, threads, processes, sockets, mmap,
-I/O multiplexing, atomics, semaphores, dynamic loading, regex, terminal I/O) are
+I/O multiplexing, atomics, semaphores, dynamic loading, regex, terminal I/O,
+and advanced enum patterns) are
 not advanced C topics in an abstract sense. They are the vocabulary of UNIX and
 Linux systems programming — the interface between a C program and the kernel it
 lives inside.
@@ -66,7 +67,7 @@ thousands of contributors over forty years, all writing C.
 The POSIX standard that governs exercises 23 through 27 (`_POSIX_C_SOURCE 200809L`)
 exists because the UNIX tradition needed a portable specification. Linux implements
 it. Exercises 28–31 and 33 go further, using Linux-specific extensions
-(`_GNU_SOURCE`): `epoll`, C11 atomics, named semaphores, `dlopen`, and raw
+(`_GNU_SOURCE`): `epoll` (Linux-specific), `dlopen`/`sem_open` (POSIX), and raw
 terminal control. Exercise 32 uses the standard POSIX regex API
 (`_POSIX_C_SOURCE 200809L`). The calls you write — `fork`, `mmap`,
 `pthread_create`, `socket`, `epoll_wait` — are the same ones Linus reads in
@@ -79,9 +80,9 @@ the kernel that services them.
 These 34 exercises are a path from `printf("hello\n")` to lock-free concurrency,
 raw terminal control, and the advanced enum patterns that underpin real-world C
 systems — from the first thing Kernighan and Ritchie taught to the mechanisms
-that make modern software possible. They are written in C11, the most recent
-stable standard, compiled with warnings that K&R's compilers could not have
-imagined.
+that make modern software possible. They are written in C11, a widely-supported standard (C17 and C23 exist but
+add little for systems programming), compiled with warnings that K&R's
+compilers could not have imagined.
 
 The 20 topic reference sheets alongside the exercises exist because C rewards
 readers who pause to understand, not just coders who copy and paste. The pitfall tables
