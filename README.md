@@ -207,7 +207,188 @@ make -n                                       # dry run: print without running
 
 ---
 
-## Appendix B: Creating Libraries
+## Appendix B: Valgrind
+
+Valgrind's Memcheck tool intercepts every memory operation at runtime and
+reports errors that compilers and sanitisers can miss — particularly
+use-after-free bugs that only surface under specific execution paths.
+
+### Installation
+
+```bash
+sudo apt install valgrind        # Debian / Ubuntu
+sudo dnf install valgrind        # Fedora / RHEL
+```
+
+### Basic invocation
+
+```bash
+valgrind ./myprog                           # minimal — shows errors only
+valgrind --leak-check=full ./myprog         # full leak report
+valgrind --leak-check=full \
+         --show-leak-kinds=all \
+         --track-origins=yes \
+         --error-exitcode=1 \
+         ./myprog arg1 arg2                 # recommended for CI
+```
+
+### Key flags
+
+| Flag | Effect |
+|------|--------|
+| `--leak-check=full` | Report every individual leaked block |
+| `--show-leak-kinds=all` | Include indirect and possible leaks, not just definite |
+| `--track-origins=yes` | Show where uninitialised values were allocated (slower) |
+| `--error-exitcode=N` | Exit with code N if any errors found (useful in scripts) |
+| `--suppressions=file` | Suppress known false positives (see below) |
+| `--gen-suppressions=all` | Print suppression entries for every error found |
+| `-q` / `--quiet` | Only print errors, no preamble or summary |
+| `--log-file=out.txt` | Write output to a file instead of stderr |
+| `--num-callers=20` | Deeper stack traces (default 12) |
+
+### Reading the output
+
+A typical leak report:
+
+```
+==12345== LEAK SUMMARY:
+==12345==    definitely lost: 40 bytes in 1 blocks
+==12345==    indirectly lost: 0 bytes in 0 blocks
+==12345==      possibly lost: 0 bytes in 0 blocks
+==12345==    still reachable: 0 bytes in 0 blocks
+==12345==         suppressed: 0 bytes in 0 blocks
+```
+
+| Category | Meaning |
+|----------|---------|
+| **definitely lost** | Pointer to block is gone — classic leak |
+| **indirectly lost** | Reachable only through a definitely-lost pointer |
+| **possibly lost** | Pointer exists but points into the middle of a block |
+| **still reachable** | Pointer still exists at exit — often intentional globals |
+| **suppressed** | Matched a suppression rule — not shown |
+
+A typical invalid-read error:
+
+```
+==12345== Invalid read of size 4
+==12345==    at 0x10916B: main (heap.c:23)
+==12345==  Address 0x4a5b080 is 0 bytes after a block of size 40 alloc'd
+==12345==    at 0x4848899: malloc (vg_replace_malloc.c:381)
+==12345==    by 0x109148: main (heap.c:18)
+```
+
+The process ID (`12345`) prefixes every line. Stack frames are listed
+innermost-first. Fix the code at the line shown in your source file.
+
+### Common error patterns
+
+**Invalid read / write**
+```c
+int *p = malloc(10 * sizeof(int));
+p[10] = 99;    /* one past the end — invalid write of size 4 */
+free(p);
+```
+
+**Use after free**
+```c
+int *p = malloc(sizeof(int));
+free(p);
+*p = 1;        /* invalid write — block already freed */
+```
+
+**Uninitialised value**
+```c
+int x;
+if (x > 0) {}  /* conditional jump on uninitialised value */
+```
+Add `--track-origins=yes` to see where `x` was allocated.
+
+**Memory leak**
+```c
+void f(void) {
+    char *buf = malloc(64);
+    /* forgot to free(buf) before returning */
+}
+```
+
+**Double free**
+```c
+int *p = malloc(sizeof(int));
+free(p);
+free(p);       /* invalid free — already freed */
+```
+
+### Suppression files
+
+Some libraries (glibc, OpenSSL) have intentional one-time allocations that
+valgrind flags as still-reachable. Suppress them with a `.supp` file:
+
+```
+# myproject.supp
+{
+   glibc_dl_init
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...obj:/lib/x86_64-linux-gnu/ld-*.so
+}
+```
+
+```bash
+valgrind --suppressions=myproject.supp --leak-check=full ./myprog
+```
+
+Generate suppressions automatically for each error:
+
+```bash
+valgrind --gen-suppressions=all --leak-check=full ./myprog 2>&1 | \
+    grep -A 20 "^{" > myproject.supp
+```
+
+### Valgrind and threads
+
+Valgrind's **Helgrind** tool detects data races:
+
+```bash
+valgrind --tool=helgrind ./threaded_prog
+```
+
+And **DRD** is a lighter-weight alternative:
+
+```bash
+valgrind --tool=drd ./threaded_prog
+```
+
+Note: threaded programs run significantly slower under Helgrind/DRD
+because every memory access is instrumented.
+
+### AddressSanitizer — faster alternative
+
+For development builds, AddressSanitizer (ASan) is 2–20× faster than
+Valgrind and catches most of the same errors:
+
+```bash
+gcc -Wall -Wextra -std=c11 -g \
+    -fsanitize=address,undefined \
+    prog.c -o prog
+./prog
+```
+
+| | Valgrind | ASan |
+|-|----------|------|
+| Speed overhead | ~20–50× | ~2× |
+| Requires recompile | No | Yes |
+| Leak detection | Yes | Yes (with `LSAN_OPTIONS=detect_leaks=1`) |
+| Uninitialised reads | Yes | Partial (use `-fsanitize=memory` / MSan) |
+| Use after free | Yes | Yes |
+| Works on existing binary | Yes | No |
+
+Use ASan for fast iteration during development; run Valgrind before
+committing to catch anything ASan misses.
+
+---
+
+## Appendix C: Creating Libraries
 
 A **library** bundles compiled object files so other programs can link against
 them without recompiling the source. C has two kinds.
