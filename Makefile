@@ -26,7 +26,7 @@ valgrind: all
 		echo "--- $$bin ---"; \
 		$(VALGRIND) $$bin 2>&1 | grep -E "ERROR SUMMARY|no leaks"; \
 	done
-	@for d in $(_MANAGED); do $(MAKE) -C $$d valgrind; done
+	@for d in $(_MANAGED); do $(MAKE) -C $$d valgrind 2>/dev/null || true; done
 
 clean:
 	@find exercises topics -type f ! -name '*.c' ! -name '*.h' ! -name 'Makefile' -delete

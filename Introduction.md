@@ -52,9 +52,12 @@ make valgrind
 make clean
 ```
 
-Every exercise directory has its own `Makefile`. Multi-file exercises (19, 24)
-and exercises with special link flags use local Makefiles; the root Makefile
-delegates to them automatically.
+Every exercise directory has its own `Makefile`. Multi-file exercises and
+exercises with special link flags use local Makefiles; the root Makefile
+delegates to them automatically. These include exercises 19 (multi-file), 24
+(threads, `-pthread`), 29 (atomics, `-pthread`), 30 (semaphores, `-pthread`),
+and 31 (dynamic loading, `-fPIC -shared` for the plugin, `-ldl` for the
+loader).
 
 ### GDB quick reference
 
@@ -151,8 +154,8 @@ Interact with the operating system: signals, processes, threads, sockets, and me
 | 26 | Sockets | `socket`/`bind`/`listen`/`accept`/`connect`, TCP loopback, UDP datagrams, AF_UNIX, `getaddrinfo` |
 | 27 | Memory-Mapped Files | `mmap`/`munmap`, file-backed read/write, `MAP_SHARED`/`MAP_PRIVATE`, anonymous mapping, `msync` |
 
-These exercises require POSIX (`_POSIX_C_SOURCE 200809L`). Exercise 24 links with
-`-pthread` and uses its own `Makefile`.
+These exercises require POSIX (`_POSIX_C_SOURCE 200809L`). Exercise 24 links
+with `-pthread` and uses its own `Makefile`.
 
 ### Tier 5 — Advanced Systems (28–33)
 
@@ -167,8 +170,10 @@ Scalable I/O, lock-free concurrency, dynamic extensibility, and terminal control
 | 32 | Regular Expressions | `regcomp`/`regexec`/`regfree`, ERE syntax, capture groups, scan loop |
 | 33 | Terminal I/O | `termios`, raw vs canonical mode, `cfmakeraw`, ANSI escape codes, `TIOCGWINSZ` |
 
-Exercises 28–31 use `_GNU_SOURCE` (Linux-specific APIs: epoll, atomics, named semaphores,
-dlopen). Exercises 29–30 link with `-pthread`.
+Exercises 28–31 and 33 use `_GNU_SOURCE` (Linux-specific APIs: epoll, C11
+atomics, named semaphores, dlopen, and raw terminal control). Exercise 32 uses
+`_POSIX_C_SOURCE 200809L` (standard POSIX regex API). Exercises 29 and 30 link
+with `-pthread`.
 
 ---
 

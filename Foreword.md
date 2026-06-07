@@ -65,11 +65,12 @@ thousands of contributors over forty years, all writing C.
 
 The POSIX standard that governs exercises 23 through 27 (`_POSIX_C_SOURCE 200809L`)
 exists because the UNIX tradition needed a portable specification. Linux implements
-it. Exercises 28 through 33 go further, using Linux-specific extensions
-(`_GNU_SOURCE`): `epoll`, C11 atomics, named semaphores, `dlopen`, POSIX regex,
-and raw terminal control. The calls you write — `fork`, `mmap`, `pthread_create`,
-`socket`, `epoll_wait` — are the same ones Linus reads in the kernel that services
-them.
+it. Exercises 28–31 and 33 go further, using Linux-specific extensions
+(`_GNU_SOURCE`): `epoll`, C11 atomics, named semaphores, `dlopen`, and raw
+terminal control. Exercise 32 uses the standard POSIX regex API
+(`_POSIX_C_SOURCE 200809L`). The calls you write — `fork`, `mmap`,
+`pthread_create`, `socket`, `epoll_wait` — are the same ones Linus reads in
+the kernel that services them.
 
 ---
 
@@ -81,7 +82,7 @@ the mechanisms that make modern software possible. They are written in C11, the 
 stable standard, compiled with warnings that K&R's compilers could not have
 imagined.
 
-The 18 topic reference sheets alongside the exercises exist because C rewards
+The 19 topic reference sheets alongside the exercises exist because C rewards
 readers who pause to understand, not just coders who copy and paste. The pitfall tables
 document real mistakes — the kind that took real programs down in production
 before anyone thought to write them down.

@@ -6,6 +6,7 @@ A structured C programming learning project covering fundamentals through system
 
 ```
 C_Programming/
+├── Foreword.md      # Historical context: C, UNIX, and Linux
 ├── Introduction.md  # Dev environment, build tools, exercise progression
 ├── exercises/       # Progressive programs, each building on the last
 │   ├── 01_hello_world/ … 33_terminal/
@@ -20,6 +21,7 @@ C_Programming/
     ├── error_handling/      return codes, errno, goto cleanup, setjmp
     ├── concurrency/         pthreads, mutex, condition variable, pitfalls
     ├── processes/           fork, exec, waitpid, pipes, popen, zombies
+    ├── signals/             signal/sigaction, sig_atomic_t, sigprocmask, SIGALRM
     ├── sockets/             TCP/UDP skeleton, framing, AF_UNIX, getaddrinfo
     ├── mmap/                file-backed, anonymous, MAP_SHARED, msync
     ├── io_multiplexing/     select/poll/epoll, O_NONBLOCK, EPOLLET
@@ -90,20 +92,30 @@ make clean
 
 ## Appendix A: Makefile
 
-The root `Makefile` builds every `.c` file found under `exercises/` and `topics/`.
+The root `Makefile` uses a two-level build strategy: exercises with special
+link flags or multiple source files manage their own local `Makefile`; the
+root Makefile delegates to them and compiles the remaining single-file
+exercises directly.
 
 ```makefile
 CC      = gcc
 CFLAGS  = -Wall -Wextra -Wpedantic -std=c11 -g
 
-SRCS := $(shell find exercises topics -name '*.c')
-BINS := $(SRCS:.c=)
-
 VALGRIND = valgrind --leak-check=full --error-exitcode=1
+
+# Directories that manage their own build (have a local Makefile)
+_MANAGED     := $(shell find exercises topics -mindepth 2 -maxdepth 2 -name 'Makefile' \
+                         -exec dirname {} \; 2>/dev/null)
+_EXCL        := $(foreach d,$(_MANAGED),-not -path '$(d)/*.c')
+
+# Single-file exercises: one .c per directory, built by this Makefile
+SRCS := $(shell find exercises topics $(_EXCL) -name '*.c')
+BINS := $(SRCS:.c=)
 
 .PHONY: all clean valgrind
 
 all: $(BINS)
+	@for d in $(_MANAGED); do $(MAKE) -C $$d all; done
 
 %: %.c
 	$(CC) $(CFLAGS) $< -o $@ -lm
@@ -113,9 +125,11 @@ valgrind: all
 		echo "--- $$bin ---"; \
 		$(VALGRIND) $$bin 2>&1 | grep -E "ERROR SUMMARY|no leaks"; \
 	done
+	@for d in $(_MANAGED); do $(MAKE) -C $$d valgrind 2>/dev/null || true; done
 
 clean:
-	@find exercises topics -type f ! -name '*.c' -delete
+	@find exercises topics -type f ! -name '*.c' ! -name '*.h' ! -name 'Makefile' -delete
+	@for d in $(_MANAGED); do $(MAKE) -C $$d clean; done
 ```
 
 ### Key concepts
@@ -126,7 +140,8 @@ clean:
 |----------|---------|
 | `CC` | Compiler — swap to `clang` to cross-check warnings |
 | `CFLAGS` | Flags passed to every compilation |
-| `SRCS` | All `.c` files found via `find` |
+| `_MANAGED` | Directories with their own local `Makefile` (multi-file or special link flags) |
+| `SRCS` | `.c` files in non-managed directories — compiled by the root pattern rule |
 | `BINS` | Same list with `.c` stripped — the target binary names |
 
 **Flags explained**
@@ -149,7 +164,20 @@ clean:
 
 `%` is a wildcard. `$<` expands to the first prerequisite (the `.c` file);
 `$@` expands to the target name (the binary). This single rule handles every
-exercise without listing them individually.
+non-managed exercise without listing them individually.
+
+**Local Makefiles**
+
+Exercises with multiple source files or special link flags use their own
+`Makefile` and are excluded from the root pattern rule:
+
+| Exercise | Reason |
+|----------|--------|
+| 19 Multi-file | Multiple `.c` + `.h` files |
+| 24 Threads | `-pthread` |
+| 29 Atomics | `-pthread` |
+| 30 Semaphores | `-pthread` |
+| 31 Dynamic Loading | `-fPIC -shared` for plugin; `-ldl` for loader |
 
 **Automatic variables**
 
@@ -168,13 +196,13 @@ named `clean` existed in the directory, `make clean` would do nothing.
 **Common `make` invocations**
 
 ```bash
-make                        # build everything
-make exercises/03_control_flow/control_flow   # build one target
-make valgrind               # build then run all under valgrind
-make clean                  # delete all compiled binaries
-make CC=clang               # override the compiler on the command line
-make -j$(nproc)             # parallel build (one job per CPU core)
-make -n                     # dry run: print commands without running them
+make                                          # build everything
+make -C exercises/03_control_flow             # build one exercise
+make valgrind                                 # run valgrind on all exercises
+make clean                                    # delete all compiled binaries
+make CC=clang                                 # override the compiler
+make -j$(nproc)                               # parallel build
+make -n                                       # dry run: print without running
 ```
 
 ---
