@@ -88,7 +88,7 @@ Valgrind wraps every memory operation and reports:
 
 ## How the Exercises Are Structured
 
-The 33 exercises form five progressive tiers. Each one introduces new concepts
+The 34 exercises form five progressive tiers. Each one introduces new concepts
 and builds on the ones before it.
 
 ### Tier 1 — Language Fundamentals (01–09)
@@ -157,9 +157,10 @@ Interact with the operating system: signals, processes, threads, sockets, and me
 These exercises require POSIX (`_POSIX_C_SOURCE 200809L`). Exercise 24 links
 with `-pthread` and uses its own `Makefile`.
 
-### Tier 5 — Advanced Systems (28–33)
+### Tier 5 — Advanced Systems (28–34)
 
-Scalable I/O, lock-free concurrency, dynamic extensibility, and terminal control.
+Scalable I/O, lock-free concurrency, dynamic extensibility, terminal control,
+and advanced enum patterns.
 
 | Exercise | Topic | What changes from the previous |
 |----------|-------|-------------------------------|
@@ -169,6 +170,7 @@ Scalable I/O, lock-free concurrency, dynamic extensibility, and terminal control
 | 31 | Dynamic Loading | `dlopen`/`dlsym`/`dlclose`, plugin interface pattern, `RTLD_NOW`/`RTLD_DEFAULT` |
 | 32 | Regular Expressions | `regcomp`/`regexec`/`regfree`, ERE syntax, capture groups, scan loop |
 | 33 | Terminal I/O | `termios`, raw vs canonical mode, `cfmakeraw`, ANSI escape codes, `TIOCGWINSZ` |
+| 34 | Enums in Depth | X-macros, sentinel/COUNT pattern, enum-indexed dispatch tables, state machines, `_Static_assert` |
 
 Exercises 28–31 and 33 use `_GNU_SOURCE` (Linux-specific APIs: epoll, C11
 atomics, named semaphores, dlopen, and raw terminal control). Exercise 32 uses

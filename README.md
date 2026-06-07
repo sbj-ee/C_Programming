@@ -28,6 +28,7 @@ C_Programming/
     ├── atomics/             _Atomic, CAS, memory ordering, lock-free stack
     ├── semaphores/          unnamed/named, counting, timedwait, cross-process
     ├── dynamic_loading/     dlopen/dlsym, plugin pattern, visibility, ABI
+    ├── enums/               X-macros, sentinel, dispatch tables, state machines
     ├── regex/               regcomp/regexec, ERE syntax, scan loop, patterns
     └── terminal/            termios, raw mode, ANSI escapes, TIOCGWINSZ
 ```
@@ -87,6 +88,7 @@ make clean
 | 31 | Dynamic Loading | `dlopen`/`dlsym`/`dlclose`/`dlerror`, `RTLD_NOW`/`RTLD_LAZY`, `RTLD_DEFAULT`, plugin dispatch pattern, `memcpy` function-pointer cast |
 | 32 | Regular Expressions | `regcomp`/`regexec`/`regfree`/`regerror`, ERE vs BRE, capture groups, `REG_ICASE`/`REG_NEWLINE`, scan loop, IPv4/date/ident patterns |
 | 33 | Terminal I/O | `termios`, canonical vs raw mode, `cfmakeraw`, `tcgetattr`/`tcsetattr`, `VMIN`/`VTIME`, ANSI escape codes, `TIOCGWINSZ`, restore-on-exit |
+| 34 | Enums in Depth | X-macros, sentinel/COUNT pattern, enum-indexed dispatch tables, state machines with transition tables, `_Static_assert` size checks |
 
 ---
 

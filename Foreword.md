@@ -76,13 +76,14 @@ the kernel that services them.
 
 ## What This Project Is
 
-These 33 exercises are a path from `printf("hello\n")` to lock-free concurrency
-and raw terminal control — from the first thing Kernighan and Ritchie taught to
-the mechanisms that make modern software possible. They are written in C11, the most recent
+These 34 exercises are a path from `printf("hello\n")` to lock-free concurrency,
+raw terminal control, and the advanced enum patterns that underpin real-world C
+systems — from the first thing Kernighan and Ritchie taught to the mechanisms
+that make modern software possible. They are written in C11, the most recent
 stable standard, compiled with warnings that K&R's compilers could not have
 imagined.
 
-The 19 topic reference sheets alongside the exercises exist because C rewards
+The 20 topic reference sheets alongside the exercises exist because C rewards
 readers who pause to understand, not just coders who copy and paste. The pitfall tables
 document real mistakes — the kind that took real programs down in production
 before anyone thought to write them down.
