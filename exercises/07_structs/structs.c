@@ -9,7 +9,7 @@ struct Point {
 };
 
 /* --- typedef: gives the struct a cleaner alias so you can write
-   'Point' instead of 'struct Point' everywhere --- */
+   'Student' instead of 'struct Student' everywhere --- */
 typedef struct {
     char   name[32];
     int    age;
