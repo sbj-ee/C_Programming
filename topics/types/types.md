@@ -25,7 +25,8 @@ long long   // at least 64 bits
 // For sizes and array indices — use these, not int
 size_t      // unsigned, result of sizeof
 ptrdiff_t   // signed, result of pointer subtraction
-ssize_t     // signed size (POSIX)
+ssize_t     // signed size (POSIX — Portable Operating System Interface,
+            // the standard that extends C11 with OS-level APIs on Linux/Unix)
 ```
 
 ### Literal suffixes
@@ -80,7 +81,9 @@ unsigned char b = 0xFF;
 
 // For type-safe character classification (<ctype.h>):
 isdigit(c)   isalpha(c)   isspace(c)   toupper(c)   tolower(c)
-// Pass (unsigned char)c or cast — undefined behaviour on negative chars
+// Pass (unsigned char)c or cast — undefined behaviour (UB: the standard
+// imposes no requirement; the program may crash or produce wrong results)
+// on negative chars
 ```
 
 ## Boolean
@@ -156,7 +159,7 @@ short  s   = (short)big;  // wrap-around — compile with -Wconversion to catch
 // Type punning — use memcpy, not casts
 float f = 1.0f;
 uint32_t bits;
-memcpy(&bits, &f, 4);     // portable; avoids strict-aliasing UB
+memcpy(&bits, &f, 4);     // portable; avoids strict-aliasing UB (Undefined Behaviour)
 ```
 
 ## Common sizes (64-bit Linux)

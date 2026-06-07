@@ -175,7 +175,7 @@ while (!g_stop) { do_work(); }
 
 | Pitfall | Consequence | Fix |
 |---------|-------------|-----|
-| Accessing shared data without a mutex | Data race → UB | Protect every access |
+| Accessing shared data without a mutex | Data race → UB (Undefined Behaviour) | Protect every access |
 | Using `if` instead of `while` for cond_wait | Spurious wakeup breaks invariant | Always use `while` |
 | Passing stack address as thread arg | Dangling pointer | Heap-allocate args |
 | Not joining a joinable thread | Resource leak (zombie thread) | `pthread_join` or detach |

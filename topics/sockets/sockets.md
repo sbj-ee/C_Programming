@@ -132,7 +132,7 @@ sendto(fd, msg, len, 0, (struct sockaddr *)&server, sizeof server);
 
 ## Unix domain sockets (AF_UNIX)
 
-In-process IPC — no network stack, higher throughput, lower latency.
+IPC (Inter-Process Communication) between processes on the same machine — no network stack, higher throughput, lower latency.
 
 ```c
 #include <sys/un.h>

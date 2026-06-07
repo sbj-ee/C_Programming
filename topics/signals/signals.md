@@ -1,6 +1,9 @@
 # Signal Handling
 
 Requires `#define _POSIX_C_SOURCE 200809L` and `<signal.h>`.
+`_POSIX_C_SOURCE 200809L` enables POSIX (Portable Operating System Interface)
+extensions to C11 — the standard set of OS-level APIs available on Linux,
+macOS, and other Unix-like systems. The value `200809L` pins the 2008 edition.
 
 ## What is a signal
 

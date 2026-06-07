@@ -1,8 +1,11 @@
 # File I/O
 
 C file I/O uses buffered `FILE *` streams (stdio) or raw file descriptors
-(POSIX `int fd`). Prefer `FILE *` for portability; use `fd` when you need
-`mmap`, `ioctl`, or non-blocking I/O.
+(POSIX `int fd`). POSIX (Portable Operating System Interface) is a family
+of standards that extends C11 with OS-level APIs — file descriptors, signals,
+threads, sockets, and more — available on Linux, macOS, and other Unix-like
+systems. Prefer `FILE *` for portability; use `fd` when you need `mmap`,
+`ioctl`, or non-blocking I/O.
 
 ## Opening and closing
 

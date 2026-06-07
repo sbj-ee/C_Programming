@@ -151,7 +151,8 @@ raise(SIGUSR1);        // send to self
   `waitpid(-1, NULL, WNOHANG)` in a loop.
 
 - **Orphan**: parent exits before child. Child is re-parented to PID 1
-  (init/systemd), which reaps it.
+  (PID — Process ID, the unique integer the kernel assigns to each process;
+  PID 1 is init/systemd), which reaps it.
   *Not a bug* unless you need the parent to collect the exit status.
 
 ## File descriptor inheritance

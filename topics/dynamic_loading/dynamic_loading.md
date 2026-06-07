@@ -66,7 +66,8 @@ void *sym = dlsym(handle, "my_func");
 int (*fn)(int, int);
 memcpy(&fn, &sym, sizeof fn);
 
-/* Also accepted by most compilers but technically UB under strict ISO C */
+/* Also accepted by most compilers but technically UB (Undefined Behaviour —
+   the standard imposes no requirement on what happens) under strict ISO C */
 fn = (int (*)(int, int))sym;
 ```
 
@@ -173,4 +174,4 @@ gcc -Wl,-rpath,'$ORIGIN' main.c -ldl -o main
 | Calling `dlclose` on a plugin that registered global callbacks | Don't `dlclose`; or track and remove callbacks first |
 | Missing `-fPIC` when building the `.so` | Shared libraries require position-independent code |
 | Using `RTLD_GLOBAL` carelessly | Symbol collisions between plugins; use `RTLD_LOCAL` |
-| ABI break between plugin versions | Add fields only at the END of the struct; version the interface |
+| ABI break between plugin versions (ABI — Application Binary Interface: the compiled calling convention, struct layout, and symbol names that callers depend on) | Add fields only at the END of the struct; version the interface |

@@ -159,7 +159,8 @@ printf("%zu\n", offsetof(Gapped, b));   // 4
 
 // Reorder to minimise padding: largest fields first
 typedef struct { int b; char a; char c; } Tight;
-// sizeof(Tight) == 8 (or even 6 on some ABI)
+// sizeof(Tight) == 8 (or even 6 on some ABI — Application Binary Interface,
+// the platform-specific rules for struct layout and alignment)
 ```
 
 ## Common patterns
