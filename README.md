@@ -615,7 +615,196 @@ gdb ./exercises/08_memory_management/memory_management
 
 ---
 
-## Appendix D: Creating Libraries
+## Appendix D: Inspecting Binaries — nm, objdump, readelf
+
+Three complementary tools let you examine what the linker and compiler
+produced without running the program.
+
+| Tool | Purpose |
+|------|---------|
+| `nm` | List symbols (functions, globals) defined or referenced |
+| `objdump` | Disassemble, show sections, headers, relocation entries |
+| `readelf` | Parse ELF structure: headers, sections, dynamic info |
+
+### nm — symbol table
+
+```bash
+nm myprog                         # all symbols
+nm -g myprog                      # global (exported) symbols only
+nm -u myprog                      # undefined (imported) symbols only
+nm -n myprog                      # sort by address
+nm -S myprog                      # show symbol size
+nm -C myprog                      # demangle C++ names (useful with g++)
+nm --defined-only myprog          # skip undefined references
+nm libmylib.a                     # list symbols in a static library
+```
+
+Each line shows: `address  type  name`
+
+**Symbol type letters** (uppercase = global, lowercase = local/static):
+
+| Letter | Meaning |
+|--------|---------|
+| `T` / `t` | Code (`.text` section) — a function |
+| `D` / `d` | Initialised data (`.data`) — a non-zero global |
+| `B` / `b` | Uninitialised data (`.bss`) — a zero-initialised global |
+| `R` / `r` | Read-only data (`.rodata`) — a string literal or `const` global |
+| `U` | Undefined — referenced but defined elsewhere (in a library) |
+| `W` | Weak symbol — overridable by a strong definition |
+| `C` | Common — uninitialised global not yet allocated |
+
+**Example — find where a function is defined:**
+
+```bash
+nm -g exercises/15_binary_search_tree/bst | grep insert
+# 0000000000001234 T bst_insert
+```
+
+**Example — check a library exposes the right interface:**
+
+```bash
+nm -g --defined-only libvec2.a
+# 0000000000000000 T vec2_add
+# 0000000000000020 T vec2_len
+```
+
+**Example — find undefined symbols (what the linker needs to resolve):**
+
+```bash
+nm -u myprog
+# U malloc
+# U printf
+# U pthread_create
+```
+
+### objdump — disassembly and section info
+
+```bash
+objdump -d myprog                 # disassemble all code sections
+objdump -d -M intel myprog        # Intel syntax (vs AT&T default)
+objdump -D myprog                 # disassemble all sections (incl. data)
+objdump -S myprog                 # interleave source with disassembly (needs -g)
+objdump -t myprog                 # symbol table (like nm)
+objdump -r myprog.o               # relocation entries
+objdump -h myprog                 # section headers
+objdump -p myprog                 # program/file headers, dynamic info
+objdump -s -j .rodata myprog      # hex dump of .rodata section
+```
+
+**Example — find a function and read its assembly:**
+
+```bash
+objdump -d myprog | grep -A 30 "<bst_insert>:"
+```
+
+**Example — see string literals in the binary:**
+
+```bash
+objdump -s -j .rodata myprog
+```
+
+**Example — interleaved source + asm (requires `-g` at compile time):**
+
+```bash
+objdump -S exercises/06_pointers/pointers | head -60
+```
+
+### readelf — ELF file structure
+
+```bash
+readelf -h myprog                 # ELF file header (architecture, entry point)
+readelf -S myprog                 # section headers
+readelf -s myprog                 # symbol table
+readelf -d myprog                 # dynamic section (shared lib dependencies)
+readelf -l myprog                 # program headers (segments)
+readelf -r myprog.o               # relocation entries
+readelf -a myprog                 # all of the above
+```
+
+**Example — check which shared libraries a binary needs at runtime:**
+
+```bash
+readelf -d myprog | grep NEEDED
+#  0x0000000000000001 (NEEDED) Shared library: [libm.so.6]
+#  0x0000000000000001 (NEEDED) Shared library: [libc.so.6]
+```
+
+**Example — verify a binary's architecture and entry point:**
+
+```bash
+readelf -h myprog | grep -E "Class|Machine|Entry"
+#   Class:                             ELF64
+#   Machine:                           Advanced Micro Devices X86-64
+#   Entry point address:               0x1060
+```
+
+**Example — list all sections and their sizes:**
+
+```bash
+readelf -S myprog | grep -E "^\s+\[|Name|Size"
+```
+
+### size — section size summary
+
+A quick way to see how much space each section occupies:
+
+```bash
+size myprog
+#    text    data     bss     dec     hex filename
+#    3421     616      48    4085     ff5 myprog
+```
+
+| Section | Contains |
+|---------|---------|
+| `text` | Machine code (compiled functions) |
+| `data` | Initialised global and static variables |
+| `bss` | Zero-initialised globals (no space in file, allocated at load) |
+
+### strings — find human-readable text
+
+```bash
+strings myprog                    # all printable strings (≥4 chars)
+strings -n 8 myprog               # only strings ≥8 chars
+strings -t x myprog               # show file offset in hex
+```
+
+Useful for spotting hard-coded paths, version strings, format strings,
+and error messages in a binary you didn't write.
+
+### Practical workflows
+
+**What symbols does my object file export?**
+```bash
+gcc -Wall -std=c11 -c mylib.c -o mylib.o
+nm -g mylib.o
+```
+
+**Why is the linker complaining about an undefined reference?**
+```bash
+nm -u myprog          # shows what's missing
+nm -g libfoo.a        # check the library actually defines it
+```
+
+**Is a `static` function really hidden from the linker?**
+```bash
+nm mylib.o | grep myfunc
+# 0000000000000000 t myfunc     ← lowercase 't' = local, not exported
+```
+
+**What is the binary actually doing at address 0x1234?**
+```bash
+objdump -d myprog | grep -A 20 "1234:"
+```
+
+**Which `.so` files does this program load?**
+```bash
+readelf -d myprog | grep NEEDED
+ldd myprog             # resolves the full path of each dependency
+```
+
+---
+
+## Appendix E: Creating Libraries
 
 A **library** bundles compiled object files so other programs can link against
 them without recompiling the source. C has two kinds.
