@@ -1,5 +1,7 @@
 # C Programming
 
+*Topics: c, learning, education, systems-programming, tutorial, exercises*
+
 A structured C programming learning project covering fundamentals through systems programming.
 
 ## Layout
