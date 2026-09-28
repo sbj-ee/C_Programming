@@ -4,6 +4,12 @@
 
 These exercises are written for **Linux** with **GCC** and target the **C11 standard**.
 
+> **Platform note:** exercises 01–22 and 34 are ISO C11 and build on Linux,
+> macOS, and Windows compilers. Exercises 23–33 use POSIX (and some Linux/GNU)
+> APIs such as `fork`, `pthread`, `mmap`, `epoll`, and `termios`: use Linux
+> (or macOS for most of them — `epoll` and unnamed `sem_init` are Linux-only).
+> On Windows, run them under **WSL**; native MSVC/MinGW builds are not supported.
+
 ### Compiler
 
 ```bash

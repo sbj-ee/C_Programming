@@ -66,9 +66,9 @@ thousands of contributors over forty years, all writing C.
 
 The POSIX standard that governs exercises 23 through 27 (`_POSIX_C_SOURCE 200809L`)
 exists because the UNIX tradition needed a portable specification. Linux implements
-it. Exercises 28–31 and 33 go further, using Linux-specific extensions
-(`_GNU_SOURCE`): `epoll` (Linux-specific), `dlopen`/`sem_open` (POSIX), and raw
-terminal control. Exercise 32 uses the standard POSIX regex API
+it. Exercises 28–31 and 33 go further and define `_GNU_SOURCE` to expose extra
+APIs: `epoll` (Linux-specific), GNU additions such as `RTLD_DEFAULT` and
+`cfmakeraw`, alongside POSIX calls like `dlopen` and `sem_open`. Exercise 32 uses the standard POSIX regex API
 (`_POSIX_C_SOURCE 200809L`). The calls you write — `fork`, `mmap`,
 `pthread_create`, `socket`, `epoll_wait` — are the same ones Linus reads in
 the kernel that services them.

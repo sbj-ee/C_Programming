@@ -11,6 +11,7 @@ static const char *describe_fn(void) { return "f(x) = sqrt(x^2 + 1)"; }
 
 Plugin *plugin_create(void) {
     Plugin *p    = malloc(sizeof *p);
+    if (p == NULL) return NULL;     /* caller must check */
     p->name      = "math_plugin v1.0";
     p->transform = transform_fn;
     p->describe  = describe_fn;

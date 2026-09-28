@@ -96,13 +96,15 @@ static void section_read_mapping(void) {
 
     /* Write a sample file */
     FILE *f = fopen(TMP_RO, "w");
+    if (f == NULL) { perror("fopen"); return; }
     fprintf(f, "line one\nline two\nline three\n");
     fclose(f);
 
     /* Open and stat to get exact size */
     int fd = open(TMP_RO, O_RDONLY);
+    if (fd < 0) { perror("open"); unlink(TMP_RO); return; }
     struct stat st;
-    fstat(fd, &st);
+    if (fstat(fd, &st) != 0) { perror("fstat"); close(fd); unlink(TMP_RO); return; }
     size_t size = (size_t)st.st_size;
 
     /* Map the whole file read-only */
@@ -155,8 +157,11 @@ static void section_write_mapping(void) {
 
     /* Create the file with initial content */
     int fd = open(TMP_RW, O_RDWR | O_CREAT | O_TRUNC, 0600);
+    if (fd < 0) { perror("open"); return; }
     Record init = { .magic = 0xDEADBEEF, .count = 0, .label = "initial" };
-    write(fd, &init, sizeof init);
+    if (write(fd, &init, sizeof init) != (ssize_t)sizeof init) {
+        perror("write"); close(fd); unlink(TMP_RW); return;
+    }
 
     /* Map read-write, shared — writes go back to the file */
     Record *rec = mmap(NULL, sizeof(Record),
@@ -182,10 +187,12 @@ static void section_write_mapping(void) {
 
     /* Re-open the file with ordinary read() to confirm the change */
     fd = open(TMP_RW, O_RDONLY);
+    if (fd < 0) { perror("open"); unlink(TMP_RW); return; }
     Record verify;
-    read(fd, &verify, sizeof verify);
+    ssize_t got = read(fd, &verify, sizeof verify);
     close(fd);
     unlink(TMP_RW);
+    if (got != (ssize_t)sizeof verify) { fprintf(stderr, "short read\n"); return; }
 
     printf("  verified via read(): count=%u label=\"%s\"\n",
            verify.count, verify.label);
@@ -345,10 +352,16 @@ static void section_pitfalls(void) {
 
     /* Demonstrate ftruncate to extend a file before mapping */
     int fd = open("/tmp/ex27_trunc.bin", O_RDWR | O_CREAT | O_TRUNC, 0600);
-    ftruncate(fd, 4096);   /* make it exactly one page */
-
-    char *page = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-    close(fd);
+    char *page = MAP_FAILED;
+    if (fd < 0) {
+        perror("open");
+    } else if (ftruncate(fd, 4096) != 0) {   /* make it exactly one page */
+        perror("ftruncate");
+        close(fd);
+    } else {
+        page = mmap(NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+        close(fd);
+    }
     if (page != MAP_FAILED) {
         snprintf(page, 4096, "page-sized file, mapped safely");
         printf("  ftruncate+mmap: \"%s\"\n", page);

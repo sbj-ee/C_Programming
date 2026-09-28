@@ -66,7 +66,7 @@ long double // 80-bit on x86, 128-bit on some platforms
 fabs((0.1 + 0.2) - 0.3) < 1e-9   // use epsilon comparison
 
 // NaN is not equal to anything, including itself
-double nan = 0.0 / 0.0;
+double nan = NAN;   // <math.h>; 0.0/0.0 only yields NaN under IEC 60559 (Annex F)
 nan == nan   // false; use isnan(nan) from <math.h>
 ```
 
@@ -162,11 +162,11 @@ uint32_t bits;
 memcpy(&bits, &f, 4);     // portable; avoids strict-aliasing UB (Undefined Behaviour)
 ```
 
-## Common sizes (64-bit Linux)
+## Common sizes (64-bit Linux/macOS, LP64; on 64-bit Windows `long` is 4 bytes)
 
 | Type | Size | Range |
 |------|------|-------|
-| `char` | 1 | -128..127 |
+| `char` | 1 | -128..127 on x86-64 (plain `char` is unsigned, 0..255, on e.g. ARM/PowerPC Linux) |
 | `short` | 2 | -32768..32767 |
 | `int` | 4 | ±2.1 billion |
 | `long` | 8 | ±9.2 × 10¹⁸ |

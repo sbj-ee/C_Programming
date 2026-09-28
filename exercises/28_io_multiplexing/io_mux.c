@@ -123,6 +123,9 @@ static void section2_select(void) {
             close(rb); done_b = 1;
         }
     }
+    /* Close any fd not already closed (timeout / error paths break early) */
+    if (!done_a) close(ra);
+    if (!done_b) close(rb);
     waitpid(pa, NULL, 0);
     waitpid(pb, NULL, 0);
 
@@ -164,6 +167,9 @@ static void section3_poll(void) {
             }
         }
     }
+    /* Close any slot still open (timeout / error paths break early) */
+    for (int i = 0; i < 2; i++)
+        if (fds[i].fd >= 0) close(fds[i].fd);
     waitpid(pa, NULL, 0);
     waitpid(pb, NULL, 0);
 

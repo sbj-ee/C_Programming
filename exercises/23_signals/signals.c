@@ -9,7 +9,8 @@
  *   - Common signals and their default dispositions
  *   - signal()    — C standard, simple but limited
  *   - sigaction() — POSIX, precise and portable
- *   - sig_atomic_t — the only type safe to touch from a handler
+ *   - volatile sig_atomic_t — the portable type for flags shared with a handler
+ *     (lock-free C11 atomics are also allowed; most other objects are not)
  *   - SIGALRM / alarm() — implementing timeouts
  *   - Async-signal safety — what you can and cannot do in a handler
  *
