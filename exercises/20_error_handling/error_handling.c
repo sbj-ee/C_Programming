@@ -196,7 +196,9 @@ static void section_goto_cleanup(void) {
  * calling destructors.
  *
  * Use cases: propagating errors across many stack frames,
- * simple exception-like control flow, signal handlers.
+ * simple exception-like control flow.  (To jump out of a signal
+ * handler use POSIX sigsetjmp/siglongjmp, which also restore the
+ * signal mask; plain longjmp from a handler is not reliable.)
  *
  * Caveats:
  *   - local variables modified after setjmp must be volatile
@@ -207,16 +209,16 @@ static void section_goto_cleanup(void) {
 static jmp_buf g_err_ctx;   /* save point for this example */
 
 #define ERR_OK       0
-#define ERR_OVERFLOW 1
-#define ERR_UNDERFLOW 2
+#define ERR_DIV_ZERO 1
+#define ERR_NEG_SQRT 2
 
 static void risky_divide(int a, int b) {
-    if (b == 0) longjmp(g_err_ctx, ERR_OVERFLOW);
+    if (b == 0) longjmp(g_err_ctx, ERR_DIV_ZERO);
     printf("  %d / %d = %d\n", a, b, a / b);
 }
 
 static void risky_sqrt_approx(int x) {
-    if (x < 0) longjmp(g_err_ctx, ERR_UNDERFLOW);
+    if (x < 0) longjmp(g_err_ctx, ERR_NEG_SQRT);
     /* integer square root by Newton's method */
     if (x == 0) { printf("  sqrt(0) = 0\n"); return; }
     int r = x;
@@ -230,8 +232,8 @@ static void section_setjmp(void) {
     int err;
     /* setjmp returns 0 on direct call, non-zero when longjmp jumps here */
     if ((err = setjmp(g_err_ctx)) != 0) {
-        const char *msg = (err == ERR_OVERFLOW)  ? "division by zero" :
-                          (err == ERR_UNDERFLOW) ? "negative sqrt"    :
+        const char *msg = (err == ERR_DIV_ZERO)  ? "division by zero" :
+                          (err == ERR_NEG_SQRT) ? "negative sqrt"    :
                           "unknown error";
         printf("  [longjmp caught] error %d: %s\n", err, msg);
         printf("\n");
@@ -250,7 +252,7 @@ static void section_setjmp_neg(void) {
     int err;
     if ((err = setjmp(g_err_ctx)) != 0) {
         printf("  [longjmp caught] error %d: %s\n", err,
-               err == ERR_UNDERFLOW ? "negative sqrt" : "unknown");
+               err == ERR_NEG_SQRT ? "negative sqrt" : "unknown");
         printf("\n");
         return;
     }

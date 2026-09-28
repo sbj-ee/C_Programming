@@ -52,6 +52,7 @@ static void *worker(void *arg) {
     for (int i = 1; i <= a->n; i++) sum += i;
 
     WorkResult *res = malloc(sizeof *res);
+    if (res == NULL) { free(a); return NULL; }   /* caller treats NULL as failure */
     res->id  = a->id;
     res->sum = sum;
     free(a);
@@ -67,6 +68,7 @@ static void section_basics(void) {
     /* Spawn threads with heap-allocated args */
     for (int i = 0; i < NTHREADS; i++) {
         WorkArgs *a = malloc(sizeof *a);
+        if (a == NULL) { fprintf(stderr, "malloc failed\n"); exit(1); }
         a->id = i;
         a->n  = (i + 1) * 10;   /* each thread sums 1..n */
         pthread_create(&tids[i], NULL, worker, a);
@@ -76,6 +78,7 @@ static void section_basics(void) {
     for (int i = 0; i < NTHREADS; i++) {
         WorkResult *res;
         pthread_join(tids[i], (void **)&res);
+        if (res == NULL) { fprintf(stderr, "  thread %d: allocation failed\n", i); continue; }
         printf("  thread %d: sum(1..%d) = %ld\n", res->id, (res->id+1)*10, res->sum);
         free(res);
     }
@@ -106,6 +109,10 @@ static void section_basics(void) {
 #define NTHREADS 4
 #define ITERS    500000L
 
+/* INTENTIONAL DATA RACE (demo only).  Unsynchronised g_unsafe++ from
+ * several threads is undefined behaviour in C11 (5.1.2.4p25).  It is
+ * kept here on purpose to show lost updates; ThreadSanitizer will (and
+ * should) report it.  Never write real code like this. */
 static volatile long g_unsafe = 0;
 
 static void *unsafe_inc(void *arg) {
@@ -214,15 +221,18 @@ static BQueue bq = {
     .not_empty = PTHREAD_COND_INITIALIZER,
 };
 
-static void bq_push(BQueue *q, int val) {
+/* Returns the queue size observed under the lock right after the push */
+static int bq_push(BQueue *q, int val) {
     pthread_mutex_lock(&q->mu);
     while (q->count == QCAP)
         pthread_cond_wait(&q->not_full, &q->mu);
     q->data[q->tail] = val;
     q->tail = (q->tail + 1) % QCAP;
     q->count++;
+    int size_now = q->count;          /* snapshot while holding the mutex */
     pthread_cond_signal(&q->not_empty);
     pthread_mutex_unlock(&q->mu);
+    return size_now;
 }
 
 /* Returns 1 with *out set, or 0 if queue is closed and empty */
@@ -249,8 +259,8 @@ static void bq_close(BQueue *q) {
 static void *producer(void *arg) {
     BQueue *q = arg;
     for (int i = 0; i < NITEMS; i++) {
-        bq_push(q, i);
-        printf("  P: pushed %2d  (queue size %d)\n", i, q->count);  /* display-only race; count may be stale */
+        int size_now = bq_push(q, i);   /* size read under the lock — no data race */
+        printf("  P: pushed %2d  (queue size %d)\n", i, size_now);
     }
     bq_close(q);
     return NULL;
@@ -331,10 +341,11 @@ static void section_attrs(void) {
      * Resources freed automatically on exit; cannot be joined. */
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
     int *n = malloc(sizeof *n);
+    if (n == NULL) { fprintf(stderr, "malloc failed\n"); exit(1); }
     *n = 99;
     pthread_t tid;
     pthread_create(&tid, &attr, detached_fn, n);
-    while (!g_detached_done) { /* spin — only safe because it's volatile */ }
+    while (!atomic_load(&g_detached_done)) { /* spin — safe because g_detached_done is atomic_int; volatile alone would be a data race */ }
     printf("  detached thread finished\n");
 
     pthread_attr_destroy(&attr);
@@ -347,6 +358,7 @@ static void section_attrs(void) {
 
     pthread_t t2;
     int *m = malloc(sizeof *m);
+    if (m == NULL) { fprintf(stderr, "malloc failed\n"); exit(1); }
     *m = 7;
     /* attr is already joinable by default; no need to set explicitly */
     pthread_create(&t2, &attr, stacksz_fn, m);

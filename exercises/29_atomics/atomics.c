@@ -59,6 +59,9 @@ static void section1_types(void) {
 #define NTHREADS  4
 #define ITERS     500000
 
+/* INTENTIONAL DATA RACE (demo only): g_unsafe is neither atomic nor
+ * locked, so the concurrent ++ below is undefined behaviour in C11.
+ * ThreadSanitizer will (and should) report it. */
 static long              g_unsafe  = 0;   /* NOT volatile, NOT atomic — demonstrates data race */
 static atomic_long       g_safe    = 0;
 
@@ -270,6 +273,7 @@ static void section6_lockfree_stack(void) {
     /* Push 5 nodes */
     for (int i = 1; i <= 5; i++) {
         Node *n = malloc(sizeof *n);
+        if (n == NULL) { fprintf(stderr, "malloc failed\n"); exit(1); }
         n->value = i * 10;
         lf_push(&stack, n);
     }

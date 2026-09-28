@@ -24,6 +24,10 @@
 /* ================================================================
    FUNCTION-LIKE MACROS — parameterised substitution
    Always parenthesise every parameter and the whole expression.
+   Parentheses do NOT fix double evaluation: SQ(i++) expands to
+   ((i++) * (i++)), which modifies i twice without sequencing (UB), and
+   MAX(f(), g()) calls the winner twice.  Pass only side-effect-free
+   arguments, or use a static inline function instead.
    ================================================================ */
 #define SQ(x)           ((x) * (x))
 #define MAX(a, b)       ((a) > (b) ? (a) : (b))

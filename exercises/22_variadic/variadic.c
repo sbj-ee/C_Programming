@@ -126,10 +126,12 @@ static void print_all(const char *first, ...) {
 static void section_sentinel(void) {
     printf("=== 2. Sentinel-terminated ===\n");
 
-    printf("count_args(\"a\",\"b\",\"c\",NULL) = %d\n",
-           count_args("a", "b", "c", NULL));
+    printf("count_args(\"a\",\"b\",\"c\",(const char *)NULL) = %d\n",
+           count_args("a", "b", "c", (const char *)NULL));
 
-    print_all("alpha", "beta", "gamma", "delta", NULL);
+    /* The sentinel must be cast: NULL may be a plain int 0, and va_arg(ap,
+     * const char *) on an int argument is undefined behaviour (C11 7.16.1.1). */
+    print_all("alpha", "beta", "gamma", "delta", (const char *)NULL);
 
     printf("\n");
 }

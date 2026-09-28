@@ -75,6 +75,7 @@ static void section2_basic(void) {
     memcpy(&destroy_fn, &raw2, sizeof destroy_fn);
 
     Plugin *p = create_fn();
+    if (p == NULL) { fprintf(stderr, "plugin_create failed\n"); dlclose(handle); return; }
     printf("  plugin name:   %s\n", p->name);
     printf("  describe():    %s\n", p->describe());
     printf("  transform(3):  %.6f\n\n", p->transform(3.0));
@@ -105,6 +106,10 @@ static LoadedPlugin load_plugin(const char *path) {
     Plugin *(*create_fn)(void); memcpy(&create_fn, &c, sizeof create_fn);
     memcpy(&lp.destroy, &d, sizeof lp.destroy);
     lp.plugin = create_fn();
+    if (lp.plugin == NULL) {
+        fprintf(stderr, "plugin_create failed\n");
+        dlclose(lp.handle); lp.handle = NULL;
+    }
     return lp;
 }
 

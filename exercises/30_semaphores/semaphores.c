@@ -142,6 +142,7 @@ static void section4_counting(void) {
     pthread_t tids[NUM_WORKERS];
     for (int i = 0; i < NUM_WORKERS; i++) {
         int *id = malloc(sizeof *id);
+        if (id == NULL) { fprintf(stderr, "malloc failed\n"); exit(1); }
         *id = i;
         pthread_create(&tids[i], NULL, worker, id);
     }

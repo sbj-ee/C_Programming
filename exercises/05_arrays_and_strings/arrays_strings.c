@@ -41,7 +41,7 @@ int main(void) {
     char greeting[20] = "Hello";   /* 5 chars + '\0', rest zeroed */
     printf("greeting      = \"%s\"\n", greeting);
     printf("strlen        = %zu\n",   strlen(greeting));   /* excludes '\0' */
-    printf("sizeof        = %zu\n",   sizeof(greeting));   /* includes '\0' and padding */
+    printf("sizeof        = %zu\n",   sizeof(greeting));   /* whole array: 20 bytes, incl. '\0' and unused (zeroed) elements */
 
     /* String literal vs char array */
     char word[] = "World";         /* compiler sizes the array: 6 bytes */

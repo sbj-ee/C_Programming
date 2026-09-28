@@ -21,7 +21,8 @@ static void print_bits32(uint32_t v) {
    |         OR           1 where either bit is 1
    ^         XOR          1 where bits differ
    ~         NOT          flip every bit
-   <<        left shift   multiply by 2^n
+   <<        left shift   multiply by 2^n (unsigned; for signed operands
+                          overflow or shifting a negative value is UB)
    >>        right shift  divide by 2^n (unsigned)
    ================================================================ */
 
@@ -64,9 +65,12 @@ static uint8_t reverse_bits(uint8_t x) {
 /* Check if x is a power of two */
 static int is_power_of_two(uint32_t x) { return x != 0 && (x & (x - 1)) == 0; }
 
-/* Round x up to the next power of two */
+/* Round x up to the next power of two.
+   The result must fit in uint32_t, so inputs above 2^31 have no answer;
+   without the guard the final x + 1 would wrap to 0.  Returns 0 in that case. */
 static uint32_t next_power_of_two(uint32_t x) {
     if (x == 0) return 1;
+    if (x > UINT32_C(0x80000000)) return 0;   /* 2^32 is not representable */
     x--;
     x |= x >> 1;
     x |= x >> 2;
@@ -82,12 +86,17 @@ static uint32_t next_power_of_two(uint32_t x) {
    The compiler controls the exact layout, so they are not portable
    across compilers/platforms for serialisation — but are useful for
    in-memory flags and hardware register models.
+
+   ISO C only guarantees bit-fields of type _Bool, signed int and
+   unsigned int (C11 6.7.2.1p5); other types such as uint8_t are an
+   implementation-defined extension, so unsigned int is used here.
+   sizeof is also implementation-defined (typically 4 with unsigned int).
    ================================================================ */
 typedef struct {
-    uint8_t red   : 5;   /* 5 bits: 0-31 */
-    uint8_t green : 6;   /* 6 bits: 0-63 */
-    uint8_t blue  : 5;   /* 5 bits: 0-31 */
-} RGB565;                /* 16-bit colour, packed into two bytes */
+    unsigned int red   : 5;   /* 5 bits: 0-31 */
+    unsigned int green : 6;   /* 6 bits: 0-63 */
+    unsigned int blue  : 5;   /* 5 bits: 0-31 */
+} RGB565;                     /* 16 bits of payload; storage size is up to the compiler */
 
 typedef struct {
     unsigned int is_directory : 1;
@@ -123,23 +132,23 @@ int main(void) {
     uint8_t a = 0xB6;   /* 10110110 = 182 */
     uint8_t b = 0x6D;   /* 01101101 = 109 */
 
-    printf("a   = "); print_bits8(a); printf("  (%3u)\n", a);
-    printf("b   = "); print_bits8(b); printf("  (%3u)\n", b);
-    printf("a&b = "); print_bits8(a & b); printf("  (%3u)  AND\n",  a & b);
-    printf("a|b = "); print_bits8(a | b); printf("  (%3u)  OR\n",   a | b);
-    printf("a^b = "); print_bits8(a ^ b); printf("  (%3u)  XOR\n",  a ^ b);
+    printf("a   = "); print_bits8(a); printf("  (%3u)\n", (unsigned)a);
+    printf("b   = "); print_bits8(b); printf("  (%3u)\n", (unsigned)b);
+    printf("a&b = "); print_bits8(a & b); printf("  (%3u)  AND\n",  (unsigned)(a & b));
+    printf("a|b = "); print_bits8(a | b); printf("  (%3u)  OR\n",   (unsigned)(a | b));
+    printf("a^b = "); print_bits8(a ^ b); printf("  (%3u)  XOR\n",  (unsigned)(a ^ b));
     printf("~a  = "); print_bits8(~a);    printf("  (%3u)  NOT\n",  (uint8_t)~a);
 
     /* --- Shifts --- */
     printf("\n=== Shifts ===\n");
     uint8_t x = 0x01;   /* 00000001 */
-    printf("x      = "); print_bits8(x); printf("  (%u)\n", x);
-    printf("x << 3 = "); print_bits8(x << 3); printf("  (%u)  *8\n", x << 3);
-    printf("x << 7 = "); print_bits8(x << 7); printf("  (%u)  *128\n", x << 7);
+    printf("x      = "); print_bits8(x); printf("  (%u)\n", (unsigned)x);
+    printf("x << 3 = "); print_bits8(x << 3); printf("  (%u)  *8\n", (unsigned)(x << 3));
+    printf("x << 7 = "); print_bits8(x << 7); printf("  (%u)  *128\n", (unsigned)(x << 7));
     uint8_t y = 0x80;   /* 10000000 */
-    printf("y      = "); print_bits8(y); printf("  (%u)\n", y);
-    printf("y >> 1 = "); print_bits8(y >> 1); printf("  (%u)  /2\n", y >> 1);
-    printf("y >> 4 = "); print_bits8(y >> 4); printf("  (%u)  /16\n", y >> 4);
+    printf("y      = "); print_bits8(y); printf("  (%u)\n", (unsigned)y);
+    printf("y >> 1 = "); print_bits8(y >> 1); printf("  (%u)  /2\n", (unsigned)(y >> 1));
+    printf("y >> 4 = "); print_bits8(y >> 4); printf("  (%u)  /16\n", (unsigned)(y >> 4));
 
     /* --- Set / clear / toggle / test --- */
     printf("\n=== Set, clear, toggle, test ===\n");
@@ -167,9 +176,9 @@ int main(void) {
         printf("  %4u -> %s\n", tests[i], is_power_of_two(tests[i]) ? "yes" : "no");
     }
 
-    printf("\nnext_power_of_two:\n");
-    uint32_t vals[] = {0, 1, 5, 9, 17, 100, 128, 1000};
-    for (int i = 0; i < 8; i++) {
+    printf("\nnext_power_of_two:  (0 = result does not fit in uint32_t)\n");
+    uint32_t vals[] = {0, 1, 5, 9, 17, 100, 128, 1000, 0x80000001u};
+    for (int i = 0; i < 9; i++) {
         printf("  %4u -> %u\n", vals[i], next_power_of_two(vals[i]));
     }
 
@@ -192,7 +201,10 @@ int main(void) {
     printf("bits     = "); print_bits32(packed); printf("\n");
     printf("r=%u g=%u b=%u\n", rgb565_r(packed), rgb565_g(packed), rgb565_b(packed));
 
-    /* XOR swap — swaps two integers without a temporary variable */
+    /* XOR swap — swaps two integers without a temporary variable.
+       Caveat: it only works on two DISTINCT objects.  If both operands
+       are the same object (e.g. swapping *p with *q where p == q), the
+       first ^= zeroes it.  A plain temporary is clearer and just as fast. */
     printf("\n=== XOR swap ===\n");
     int p = 42, q = 99;
     printf("before: p=%d q=%d\n", p, q);
